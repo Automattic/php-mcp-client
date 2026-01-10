@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ruleset name="MCP Client Coding Standard">
+    <description>PSR-12 coding standard for MCP Client</description>
+
+    <!-- Use PSR-12 as base standard (4 spaces indentation) -->
+    <rule ref="PSR12"/>
+
+    <!-- Paths to check -->
+    <file>src</file>
+    <file>tests</file>
+    <file>examples</file>
+
+    <!-- Exclude vendor directory -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <!-- Show progress and colors -->
+    <arg value="sp"/>
+    <arg name="colors"/>
+</ruleset>
