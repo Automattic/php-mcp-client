@@ -45,20 +45,30 @@ class HttpTransport extends AbstractTransport
     private ?string $buffered_response = null;
 
     /**
+     * Custom headers to include in all requests.
+     *
+     * @var array<string, string>
+     */
+    private array $custom_headers = [];
+
+    /**
      * Create a new HTTP transport.
      *
-     * @param string               $endpoint_url The MCP server endpoint URL.
-     * @param HttpClientInterface|null $http_client  HTTP client (optional, defaults to CurlHttpClient).
-     * @param LoggerInterface|null     $logger       PSR-3 logger for debugging (optional).
+     * @param string                   $endpoint_url   The MCP server endpoint URL.
+     * @param HttpClientInterface|null $http_client    HTTP client (optional, defaults to CurlHttpClient).
+     * @param LoggerInterface|null     $logger         PSR-3 logger for debugging (optional).
+     * @param array<string, string>    $custom_headers Custom headers to include in all requests (e.g., Authorization).
      */
     public function __construct(
         string $endpoint_url,
         ?HttpClientInterface $http_client = null,
-        ?LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
+        array $custom_headers = []
     ) {
-        $this->endpoint_url = $endpoint_url;
-        $this->http_client  = $http_client ?? new CurlHttpClient();
-        $this->logger       = $logger ?? new NullLogger();
+        $this->endpoint_url   = $endpoint_url;
+        $this->http_client    = $http_client ?? new CurlHttpClient();
+        $this->logger         = $logger ?? new NullLogger();
+        $this->custom_headers = $custom_headers;
     }
 
     /**
@@ -192,10 +202,10 @@ class HttpTransport extends AbstractTransport
      */
     private function buildRequestHeaders(): array
     {
-        $headers = [
+        $headers = array_merge($this->custom_headers, [
             'Content-Type' => 'application/json',
             'Accept'       => 'application/json',
-        ];
+        ]);
 
         if ($this->session_id !== null) {
             $headers['Mcp-Session-Id'] = $this->session_id;
@@ -276,9 +286,9 @@ class HttpTransport extends AbstractTransport
             return;
         }
 
-        $headers = [
+        $headers = array_merge($this->custom_headers, [
             'Mcp-Session-Id' => $this->session_id,
-        ];
+        ]);
 
         $this->logger->debug('Closing session', [
             'endpoint'   => $this->endpoint_url,
