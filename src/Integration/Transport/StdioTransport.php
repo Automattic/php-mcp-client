@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Integration\Transport;
+namespace GalatanOvidiu\PhpMcpClient\Integration\Transport;
 
-use Ovidiu\McpClient\Core\Exception\TransportException;
-use Ovidiu\McpClient\Core\Transport\AbstractTransport;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Core\Transport\AbstractTransport;
 
 /**
  * Stdio transport implementation for MCP.

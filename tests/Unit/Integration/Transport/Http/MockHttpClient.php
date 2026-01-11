@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Tests\Unit\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use Ovidiu\McpClient\Integration\Transport\Http\HttpClientException;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpClientInterface;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientException;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientInterface;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
 
 /**
  * Mock HTTP client for testing HttpTransport without network calls.

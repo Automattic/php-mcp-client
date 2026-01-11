@@ -1,5 +1,5 @@
 {
-    "name": "ovidiu/mcp-client",
+    "name": "galatanovidiu/php-mcp-client",
     "description": "A PHP MCP (Model Context Protocol) client implementation",
     "type": "library",
     "license": "MIT",
@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Ovidiu\\McpClient\\": "src/"
+            "GalatanOvidiu\\PhpMcpClient\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Ovidiu\\McpClient\\Tests\\": "tests/"
+            "GalatanOvidiu\\PhpMcpClient\\Tests\\": "tests/"
         }
     },
     "config": {

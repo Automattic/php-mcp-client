@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Contracts;
+namespace GalatanOvidiu\PhpMcpClient\Core\Contracts;
 
 /**
  * Handler for incoming MCP server messages.

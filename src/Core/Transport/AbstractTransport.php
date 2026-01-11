@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Transport;
+namespace GalatanOvidiu\PhpMcpClient\Core\Transport;
 
-use Ovidiu\McpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
 
 /**
  * Base abstract transport implementation.

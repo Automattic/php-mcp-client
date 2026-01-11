@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Tests\Unit\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use Ovidiu\McpClient\Integration\Transport\Http\CurlHttpClient;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpClientException;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpClientInterface;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\CurlHttpClient;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientException;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientInterface;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  * without a real HTTP server. Integration tests with actual HTTP servers should
  * be in a separate test suite.
  *
- * @covers \Ovidiu\McpClient\Integration\Transport\Http\CurlHttpClient
+ * @covers \GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\CurlHttpClient
  */
 final class CurlHttpClientTest extends TestCase
 {
@@ -120,7 +120,7 @@ final class CurlHttpClientTest extends TestCase
             $this->fail('Expected HttpClientException was not thrown');
         } catch (HttpClientException $exception) {
             $this->assertInstanceOf(
-                \Ovidiu\McpClient\Core\Exception\TransportException::class,
+                \GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException::class,
                 $exception
             );
         }

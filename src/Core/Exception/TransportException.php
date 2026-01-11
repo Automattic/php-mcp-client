@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Exception;
+namespace GalatanOvidiu\PhpMcpClient\Core\Exception;
 
 /**
  * Exception thrown when transport layer operations fail.

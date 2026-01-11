@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Client;
+namespace GalatanOvidiu\PhpMcpClient\Core\Client;
 
 /**
  * Information about the connected MCP server.

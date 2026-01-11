@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Contracts;
+namespace GalatanOvidiu\PhpMcpClient\Core\Contracts;
 
-use Ovidiu\McpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
 
 /**
  * Transport layer abstraction for MCP communication.

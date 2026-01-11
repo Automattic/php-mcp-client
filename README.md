@@ -20,9 +20,9 @@ composer install
 ```php
 <?php
 
-use Ovidiu\McpClient\Core\Client\ClientCapabilities;
-use Ovidiu\McpClient\Core\Client\McpClient;
-use Ovidiu\McpClient\Integration\Transport\StdioTransport;
+use GalatanOvidiu\PhpMcpClient\Core\Client\ClientCapabilities;
+use GalatanOvidiu\PhpMcpClient\Core\Client\McpClient;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\StdioTransport;
 
 // Create transport (connects to MCP server as subprocess)
 $transport = new StdioTransport('npx', ['-y', '@modelcontextprotocol/server-filesystem', '/tmp']);

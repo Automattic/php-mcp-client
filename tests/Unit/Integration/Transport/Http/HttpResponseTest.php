@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Tests\Unit\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use Ovidiu\McpClient\Integration\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for HttpResponse value object.
  *
- * @covers \Ovidiu\McpClient\Integration\Transport\Http\HttpResponse
+ * @covers \GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse
  */
 final class HttpResponseTest extends TestCase
 {

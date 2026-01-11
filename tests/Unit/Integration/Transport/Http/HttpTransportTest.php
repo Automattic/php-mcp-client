@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Tests\Unit\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use Ovidiu\McpClient\Core\Contracts\TransportInterface;
-use Ovidiu\McpClient\Core\Exception\TransportException;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpClientException;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpResponse;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpTransport;
+use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientException;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpTransport;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for HttpTransport.
  *
- * @covers \Ovidiu\McpClient\Integration\Transport\Http\HttpTransport
+ * @covers \GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpTransport
  */
 final class HttpTransportTest extends TestCase
 {

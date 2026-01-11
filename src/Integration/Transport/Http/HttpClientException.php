@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Integration\Transport\Http;
 
-use Ovidiu\McpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
 
 /**
  * Exception thrown when HTTP client operations fail.

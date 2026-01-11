@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\JsonRpc;
+namespace GalatanOvidiu\PhpMcpClient\Core\JsonRpc;
 
-use Ovidiu\McpClient\Core\Exception\JsonRpcException;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\JsonRpcException;
 
 /**
  * JSON-RPC 2.0 Error object.

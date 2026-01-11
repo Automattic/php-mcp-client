@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Client;
+namespace GalatanOvidiu\PhpMcpClient\Core\Client;
 
-use Ovidiu\McpClient\Core\Contracts\MessageHandlerInterface;
-use Ovidiu\McpClient\Core\Contracts\TransportInterface;
-use Ovidiu\McpClient\Core\Exception\ConnectionException;
-use Ovidiu\McpClient\Core\Exception\JsonRpcException;
-use Ovidiu\McpClient\Core\Exception\McpException;
-use Ovidiu\McpClient\Core\Exception\TimeoutException;
-use Ovidiu\McpClient\Core\Exception\TransportException;
-use Ovidiu\McpClient\Core\JsonRpc\Error;
-use Ovidiu\McpClient\Core\JsonRpc\IdGenerator;
-use Ovidiu\McpClient\Core\JsonRpc\Message;
-use Ovidiu\McpClient\Core\JsonRpc\Notification;
-use Ovidiu\McpClient\Core\JsonRpc\Request;
-use Ovidiu\McpClient\Core\JsonRpc\Response;
+use GalatanOvidiu\PhpMcpClient\Core\Contracts\MessageHandlerInterface;
+use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\ConnectionException;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\JsonRpcException;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\McpException;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\TimeoutException;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\Error;
+use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\IdGenerator;
+use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\Message;
+use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\Notification;
+use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\Request;
+use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use stdClass;

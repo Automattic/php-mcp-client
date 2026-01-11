@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Contracts;
+namespace GalatanOvidiu\PhpMcpClient\Core\Contracts;
 
 use Psr\Log\LoggerInterface as PsrLoggerInterface;
 

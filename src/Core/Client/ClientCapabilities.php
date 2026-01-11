@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ovidiu\McpClient\Core\Client;
+namespace GalatanOvidiu\PhpMcpClient\Core\Client;
 
 /**
  * MCP client capabilities configuration.

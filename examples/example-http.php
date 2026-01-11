@@ -7,33 +7,52 @@
  * listing available tools, and disconnecting.
  *
  * Usage:
- *   php examples/example-http.php <endpoint-url>
+ *   php examples/example-http.php <endpoint-url> [bearer-token]
  *
- * Example:
+ * Examples:
  *   php examples/example-http.php http://localhost:8080/mcp
+ *   php examples/example-http.php https://api.example.com/mcp "your-bearer-token"
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Ovidiu\McpClient\Core\Client\ClientCapabilities;
-use Ovidiu\McpClient\Core\Client\McpClient;
-use Ovidiu\McpClient\Integration\Transport\Http\HttpTransport;
+use GalatanOvidiu\PhpMcpClient\Core\Client\ClientCapabilities;
+use GalatanOvidiu\PhpMcpClient\Core\Client\McpClient;
+use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpTransport;
 
 if ($argc < 2) {
-    echo "Usage: php examples/example-http.php <endpoint-url>\n";
-    echo "Example: php examples/example-http.php http://localhost:8080/mcp\n";
+    echo "Usage: php examples/example-http.php <endpoint-url> [bearer-token]\n";
+    echo "Examples:\n";
+    echo "  php examples/example-http.php http://localhost:8080/mcp\n";
+    echo "  php examples/example-http.php https://api.example.com/mcp \"your-token\"\n";
     exit(1);
 }
 
 $endpoint_url = $argv[1];
+$bearer_token = $argv[2] ?? null;
 
 echo "Starting MCP client...\n";
-echo "Endpoint: {$endpoint_url}\n\n";
+echo "Endpoint: {$endpoint_url}\n";
+if ($bearer_token !== null) {
+    echo "Auth: Bearer token provided\n";
+}
+echo "\n";
+
+// Build custom headers
+$custom_headers = [];
+if ($bearer_token !== null) {
+    $custom_headers['Authorization'] = 'Bearer ' . $bearer_token;
+}
 
 // Create transport
-$transport = new HttpTransport($endpoint_url);
+$transport = new HttpTransport(
+    $endpoint_url,
+    null, // Use default CurlHttpClient
+    null, // Use default NullLogger
+    $custom_headers
+);
 
 // Create client capabilities
 $capabilities = new ClientCapabilities();
