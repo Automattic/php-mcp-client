@@ -95,6 +95,26 @@ final class ServerCapabilitiesTest extends TestCase
 	}
 
 	/**
+	 * Test hasCompletions returns true when completions key is present.
+	 */
+	public function test_hasCompletions_withCompletionsCapability_returnsTrue(): void
+	{
+		$capabilities = new ServerCapabilities(['completions' => []]);
+
+		$this->assertTrue($capabilities->hasCompletions());
+	}
+
+	/**
+	 * Test hasCompletions returns false when completions key is absent.
+	 */
+	public function test_hasCompletions_withoutCompletionsCapability_returnsFalse(): void
+	{
+		$capabilities = new ServerCapabilities([]);
+
+		$this->assertFalse($capabilities->hasCompletions());
+	}
+
+	/**
 	 * Test toolsListChanged returns true when listChanged is true.
 	 */
 	public function test_toolsListChanged_withListChangedTrue_returnsTrue(): void

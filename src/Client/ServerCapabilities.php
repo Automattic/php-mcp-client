@@ -57,6 +57,14 @@ class ServerCapabilities
     }
 
     /**
+     * Check if server supports completions.
+     */
+    public function hasCompletions(): bool
+    {
+        return isset($this->raw['completions']);
+    }
+
+    /**
      * Check if tools support list changed notifications.
      */
     public function toolsListChanged(): bool
