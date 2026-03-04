@@ -751,6 +751,96 @@ final class McpClientTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
+    // callTool isError field (3 tests)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test callTool returns isError field when server responds with isError true.
+     */
+    public function test_callTool_withIsErrorTrue_returnsResultWithIsError(): void
+    {
+        [$client, $transport] = $this->createConnectedClient(['tools' => new \stdClass()]);
+
+        $expected = [
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'Something went wrong',
+                ],
+            ],
+            'isError' => true,
+        ];
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 2,
+            'result'  => $expected,
+        ]));
+
+        $result = $client->callTool('failing-tool');
+
+        $this->assertSame($expected, $result);
+        $this->assertTrue($result['isError']);
+    }
+
+    /**
+     * Test callTool returns isError field when server responds with isError false.
+     */
+    public function test_callTool_withIsErrorFalse_returnsResultWithIsError(): void
+    {
+        [$client, $transport] = $this->createConnectedClient(['tools' => new \stdClass()]);
+
+        $expected = [
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'Success',
+                ],
+            ],
+            'isError' => false,
+        ];
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 2,
+            'result'  => $expected,
+        ]));
+
+        $result = $client->callTool('successful-tool');
+
+        $this->assertSame($expected, $result);
+        $this->assertFalse($result['isError']);
+    }
+
+    /**
+     * Test callTool returns result without isError when server omits the field.
+     */
+    public function test_callTool_withoutIsError_returnsResultWithoutIsError(): void
+    {
+        [$client, $transport] = $this->createConnectedClient(['tools' => new \stdClass()]);
+
+        $expected = [
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'Hello world',
+                ],
+            ],
+        ];
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 2,
+            'result'  => $expected,
+        ]));
+
+        $result = $client->callTool('simple-tool');
+
+        $this->assertSame($expected, $result);
+        $this->assertArrayNotHasKey('isError', $result);
+    }
+
+    // -------------------------------------------------------------------------
     // Protocol Version Negotiation (2 tests)
     // -------------------------------------------------------------------------
 
