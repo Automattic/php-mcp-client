@@ -458,12 +458,14 @@ class McpClient
         $protocol_version = $result['protocolVersion'] ?? self::PROTOCOL_VERSION;
         $server_info_data = $result['serverInfo'] ?? [];
         $capabilities     = $result['capabilities'] ?? [];
+        $instructions     = $result['instructions'] ?? null;
 
         $this->server_info = new ServerInfo(
             $server_info_data['name'] ?? 'Unknown',
             $server_info_data['version'] ?? '0.0.0',
             $protocol_version,
-            new ServerCapabilities($capabilities)
+            new ServerCapabilities($capabilities),
+            $instructions
         );
 
         $this->logger->info('MCP initialized', [

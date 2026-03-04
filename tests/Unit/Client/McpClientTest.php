@@ -516,6 +516,52 @@ final class McpClientTest extends TestCase
     }
 
     /**
+     * Test connect stores instructions from init response in ServerInfo.
+     */
+    public function test_connect_withInstructions_storesInstructionsInServerInfo(): void
+    {
+        $transport = new MockTransport();
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 1,
+            'result'  => [
+                'protocolVersion' => '2025-11-25',
+                'serverInfo'      => [
+                    'name'    => 'test-server',
+                    'version' => '1.0.0',
+                ],
+                'capabilities'  => [],
+                'instructions'  => 'Use this server to access filesystem resources.',
+            ],
+        ]));
+
+        $client = new McpClient(
+            $transport,
+            new ClientCapabilities(),
+            'test-client',
+            '1.0.0'
+        );
+
+        $client->connect();
+
+        $this->assertSame(
+            'Use this server to access filesystem resources.',
+            $client->getServerInfo()->getInstructions()
+        );
+    }
+
+    /**
+     * Test connect without instructions results in null instructions.
+     */
+    public function test_connect_withoutInstructions_returnsNullInstructions(): void
+    {
+        [$client] = $this->createConnectedClient([]);
+
+        $this->assertNull($client->getServerInfo()->getInstructions());
+    }
+
+    /**
      * Test listTools returns normally with valid response containing 'tools' key.
      */
     public function test_listTools_withValidResponse_returnsResult(): void

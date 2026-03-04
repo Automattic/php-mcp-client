@@ -115,4 +115,51 @@ final class ServerInfoTest extends TestCase
 		$this->assertSame('', $info->getVersion());
 		$this->assertSame('', $info->getProtocolVersion());
 	}
+
+	/**
+	 * Test getInstructions returns instructions string when provided.
+	 */
+	public function test_getInstructions_withInstructions_returnsInstructionsString(): void
+	{
+		$info = new ServerInfo(
+			'test-server',
+			'1.0.0',
+			'2025-11-25',
+			new ServerCapabilities([]),
+			'Use this server to access filesystem resources.'
+		);
+
+		$this->assertSame('Use this server to access filesystem resources.', $info->getInstructions());
+	}
+
+	/**
+	 * Test getInstructions returns null when instructions are not provided.
+	 */
+	public function test_getInstructions_withoutInstructions_returnsNull(): void
+	{
+		$info = new ServerInfo(
+			'test-server',
+			'1.0.0',
+			'2025-11-25',
+			new ServerCapabilities([])
+		);
+
+		$this->assertNull($info->getInstructions());
+	}
+
+	/**
+	 * Test getInstructions returns empty string when instructions are empty.
+	 */
+	public function test_getInstructions_withEmptyString_returnsEmptyString(): void
+	{
+		$info = new ServerInfo(
+			'test-server',
+			'1.0.0',
+			'2025-11-25',
+			new ServerCapabilities([]),
+			''
+		);
+
+		$this->assertSame('', $info->getInstructions());
+	}
 }
