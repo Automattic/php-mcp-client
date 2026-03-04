@@ -481,7 +481,20 @@ class McpClient
             throw new McpException('Invalid initialize response');
         }
 
-        $protocol_version = $result['protocolVersion'] ?? self::PROTOCOL_VERSION;
+        if (!isset($result['protocolVersion'])) {
+            throw new McpException('Server did not return a protocolVersion in initialize response');
+        }
+
+        $protocol_version = $result['protocolVersion'];
+
+        if ($protocol_version !== self::PROTOCOL_VERSION) {
+            throw new McpException(sprintf(
+                'Protocol version mismatch: client supports %s, server returned %s',
+                self::PROTOCOL_VERSION,
+                $protocol_version
+            ));
+        }
+
         $server_info_data = $result['serverInfo'] ?? [];
         $capabilities     = $result['capabilities'] ?? [];
         $instructions     = $result['instructions'] ?? null;

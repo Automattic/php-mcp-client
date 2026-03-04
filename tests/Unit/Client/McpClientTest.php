@@ -749,4 +749,73 @@ final class McpClientTest extends TestCase
         $this->assertNull($server_info->getTitle());
         $this->assertNull($server_info->getWebsiteUrl());
     }
+
+    // -------------------------------------------------------------------------
+    // Protocol Version Negotiation (2 tests)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test connect throws McpException when server returns a mismatched protocol version.
+     */
+    public function test_connect_withMismatchedProtocolVersion_throwsMcpException(): void
+    {
+        $transport = new MockTransport();
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 1,
+            'result'  => [
+                'protocolVersion' => '2024-01-01',
+                'serverInfo'      => [
+                    'name'    => 'test-server',
+                    'version' => '1.0.0',
+                ],
+                'capabilities' => [],
+            ],
+        ]));
+
+        $client = new McpClient(
+            $transport,
+            new ClientCapabilities(),
+            'test-client',
+            '1.0.0'
+        );
+
+        $this->expectException(McpException::class);
+        $this->expectExceptionMessage('client supports 2025-11-25, server returned 2024-01-01');
+
+        $client->connect();
+    }
+
+    /**
+     * Test connect throws McpException when server omits protocolVersion field.
+     */
+    public function test_connect_withMissingProtocolVersion_throwsMcpException(): void
+    {
+        $transport = new MockTransport();
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 1,
+            'result'  => [
+                'serverInfo' => [
+                    'name'    => 'test-server',
+                    'version' => '1.0.0',
+                ],
+                'capabilities' => [],
+            ],
+        ]));
+
+        $client = new McpClient(
+            $transport,
+            new ClientCapabilities(),
+            'test-client',
+            '1.0.0'
+        );
+
+        $this->expectException(McpException::class);
+        $this->expectExceptionMessage('protocolVersion');
+
+        $client->connect();
+    }
 }
