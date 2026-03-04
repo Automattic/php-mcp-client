@@ -362,6 +362,30 @@ class McpClient
     }
 
     /**
+     * Send a cancellation notification for an in-flight request.
+     *
+     * Sends a `notifications/cancelled` notification to the server, indicating
+     * the client is no longer interested in the response for the given request.
+     *
+     * @param int|string  $request_id The ID of the request to cancel.
+     * @param string|null $reason     Optional human-readable cancellation reason.
+     *
+     * @throws McpException When sending fails.
+     *
+     * @since n.e.x.t
+     */
+    public function sendCancellation($request_id, ?string $reason = null): void
+    {
+        $params = ['requestId' => $request_id];
+
+        if ($reason !== null) {
+            $params['reason'] = $reason;
+        }
+
+        $this->notify('notifications/cancelled', $params);
+    }
+
+    /**
      * Send a notification to the server.
      *
      * @param string $method The method name.

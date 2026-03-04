@@ -997,4 +997,44 @@ final class McpClientTest extends TestCase
         $this->assertSame('value', $last_message['params']['key']);
         $this->assertSame(['progressToken' => 'tok-456'], $last_message['params']['_meta']);
     }
+
+    // -------------------------------------------------------------------------
+    // sendCancellation (2 tests)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test sendCancellation sends notifications/cancelled with reason when provided.
+     */
+    public function test_sendCancellation_withReason_sendsCorrectNotification(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        $client->sendCancellation(42, 'User cancelled the request');
+
+        $messages     = $transport->getSentMessages();
+        $last_message = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame('notifications/cancelled', $last_message['method']);
+        $this->assertSame(42, $last_message['params']['requestId']);
+        $this->assertSame('User cancelled the request', $last_message['params']['reason']);
+        // Notifications must not have an id field.
+        $this->assertArrayNotHasKey('id', $last_message);
+    }
+
+    /**
+     * Test sendCancellation omits reason field when null.
+     */
+    public function test_sendCancellation_withoutReason_omitsReasonField(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        $client->sendCancellation('req-abc');
+
+        $messages     = $transport->getSentMessages();
+        $last_message = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame('notifications/cancelled', $last_message['method']);
+        $this->assertSame('req-abc', $last_message['params']['requestId']);
+        $this->assertArrayNotHasKey('reason', $last_message['params']);
+    }
 }
