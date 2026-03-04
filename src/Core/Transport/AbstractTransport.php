@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Core\Transport;
 
-use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 
 /**
  * Base abstract transport implementation.

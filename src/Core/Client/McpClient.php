@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Core\Client;
 
-use GalatanOvidiu\PhpMcpClient\Core\Contracts\MessageHandlerInterface;
-use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Contracts\MessageHandlerInterface;
+use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
 use GalatanOvidiu\PhpMcpClient\Exception\ConnectionException;
 use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;

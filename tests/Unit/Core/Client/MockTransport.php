@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Core\Client;
 
-use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 
 /**
  * Mock transport for testing McpClient without a real MCP server.

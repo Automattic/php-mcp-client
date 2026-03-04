@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
 use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientException;
 use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
