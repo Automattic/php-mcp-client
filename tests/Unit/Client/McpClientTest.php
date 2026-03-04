@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Core\Client;
+namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Client;
 
-use GalatanOvidiu\PhpMcpClient\Core\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Core\Client\McpClient;
+use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
+use GalatanOvidiu\PhpMcpClient\Client\McpClient;
 use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
 use GalatanOvidiu\PhpMcpClient\Exception\McpException;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for McpClient.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Core\Client\McpClient
+ * @covers \GalatanOvidiu\PhpMcpClient\Client\McpClient
  */
 final class McpClientTest extends TestCase
 {

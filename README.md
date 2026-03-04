@@ -20,8 +20,8 @@ composer install
 ```php
 <?php
 
-use GalatanOvidiu\PhpMcpClient\Core\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Core\Client\McpClient;
+use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
+use GalatanOvidiu\PhpMcpClient\Client\McpClient;
 use GalatanOvidiu\PhpMcpClient\Transport\StdioTransport;
 
 // Create transport (connects to MCP server as subprocess)

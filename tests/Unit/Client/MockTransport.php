@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Core\Client;
+namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Client;
 
 use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 

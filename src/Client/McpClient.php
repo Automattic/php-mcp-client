@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Core\Client;
+namespace GalatanOvidiu\PhpMcpClient\Client;
 
 use GalatanOvidiu\PhpMcpClient\Contracts\MessageHandlerInterface;
 use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
