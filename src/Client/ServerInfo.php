@@ -16,6 +16,9 @@ class ServerInfo
     private string $protocol_version;
     private ServerCapabilities $capabilities;
     private ?string $instructions;
+    private ?string $description;
+    private ?string $title;
+    private ?string $website_url;
 
     /**
      * Create server info from initialization response.
@@ -25,19 +28,28 @@ class ServerInfo
      * @param string             $protocol_version MCP protocol version.
      * @param ServerCapabilities $capabilities     Server capabilities.
      * @param string|null        $instructions     Optional server instructions for the client.
+     * @param string|null        $description      Optional server description.
+     * @param string|null        $title            Optional human-readable server title.
+     * @param string|null        $website_url      Optional server website URL.
      */
     public function __construct(
         string $name,
         string $version,
         string $protocol_version,
         ServerCapabilities $capabilities,
-        ?string $instructions = null
+        ?string $instructions = null,
+        ?string $description = null,
+        ?string $title = null,
+        ?string $website_url = null
     ) {
         $this->name             = $name;
         $this->version          = $version;
         $this->protocol_version = $protocol_version;
         $this->capabilities     = $capabilities;
         $this->instructions     = $instructions;
+        $this->description      = $description;
+        $this->title            = $title;
+        $this->website_url      = $website_url;
     }
 
     /**
@@ -81,5 +93,35 @@ class ServerInfo
     public function getInstructions(): ?string
     {
         return $this->instructions;
+    }
+
+    /**
+     * Get the server description.
+     *
+     * Returns null when the server does not provide a description.
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
+     * Get the human-readable server title.
+     *
+     * Returns null when the server does not provide a title.
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    /**
+     * Get the server website URL.
+     *
+     * Returns null when the server does not provide a website URL.
+     */
+    public function getWebsiteUrl(): ?string
+    {
+        return $this->website_url;
     }
 }

@@ -64,29 +64,41 @@ class McpClient
 
     private string $client_name;
     private string $client_version;
+    private ?string $client_description;
+    private ?string $client_title;
+    private ?string $client_website_url;
 
     /**
      * Create a new MCP client.
      *
-     * @param TransportInterface $transport The transport to use.
-     * @param ClientCapabilities $capabilities The client capabilities.
-     * @param string $client_name The client application name.
-     * @param string $client_version The client application version.
-     * @param LoggerInterface|null $logger Optional logger.
+     * @param TransportInterface   $transport          The transport to use.
+     * @param ClientCapabilities   $capabilities       The client capabilities.
+     * @param string               $client_name        The client application name.
+     * @param string               $client_version     The client application version.
+     * @param string|null          $client_description Optional client description.
+     * @param string|null          $client_title       Optional human-readable client title.
+     * @param string|null          $client_website_url Optional client website URL.
+     * @param LoggerInterface|null $logger             Optional logger.
      */
     public function __construct(
         TransportInterface $transport,
         ClientCapabilities $capabilities,
         string $client_name = 'php-mcp-client',
         string $client_version = '1.0.0',
+        ?string $client_description = null,
+        ?string $client_title = null,
+        ?string $client_website_url = null,
         ?LoggerInterface $logger = null
     ) {
-        $this->transport      = $transport;
-        $this->capabilities   = $capabilities;
-        $this->client_name    = $client_name;
-        $this->client_version = $client_version;
-        $this->logger         = $logger ?? new NullLogger();
-        $this->id_generator   = new IdGenerator();
+        $this->transport          = $transport;
+        $this->capabilities       = $capabilities;
+        $this->client_name        = $client_name;
+        $this->client_version     = $client_version;
+        $this->client_description = $client_description;
+        $this->client_title       = $client_title;
+        $this->client_website_url = $client_website_url;
+        $this->logger             = $logger ?? new NullLogger();
+        $this->id_generator       = new IdGenerator();
     }
 
     /**
@@ -436,13 +448,27 @@ class McpClient
     {
         $id = $this->id_generator->next();
 
+        $client_info = [
+            'name'    => $this->client_name,
+            'version' => $this->client_version,
+        ];
+
+        if ($this->client_description !== null) {
+            $client_info['description'] = $this->client_description;
+        }
+
+        if ($this->client_title !== null) {
+            $client_info['title'] = $this->client_title;
+        }
+
+        if ($this->client_website_url !== null) {
+            $client_info['websiteUrl'] = $this->client_website_url;
+        }
+
         $init_request = new Request($id, 'initialize', [
             'protocolVersion' => self::PROTOCOL_VERSION,
             'capabilities'    => $this->capabilities->toObject(),
-            'clientInfo'      => [
-                'name'    => $this->client_name,
-                'version' => $this->client_version,
-            ],
+            'clientInfo'      => $client_info,
         ]);
 
         $this->logger->debug('Sending initialize request');
@@ -465,7 +491,10 @@ class McpClient
             $server_info_data['version'] ?? '0.0.0',
             $protocol_version,
             new ServerCapabilities($capabilities),
-            $instructions
+            $instructions,
+            $server_info_data['description'] ?? null,
+            $server_info_data['title'] ?? null,
+            $server_info_data['websiteUrl'] ?? null
         );
 
         $this->logger->info('MCP initialized', [

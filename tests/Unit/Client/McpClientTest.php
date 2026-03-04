@@ -588,4 +588,165 @@ final class McpClientTest extends TestCase
 
         $this->assertSame($expected, $result);
     }
+
+    // -------------------------------------------------------------------------
+    // Implementation fields: clientInfo (outgoing)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test clientInfo includes description, title, websiteUrl when provided.
+     */
+    public function test_connect_withImplementationFields_sendsFieldsInClientInfo(): void
+    {
+        $transport = new MockTransport();
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 1,
+            'result'  => [
+                'protocolVersion' => '2025-11-25',
+                'serverInfo'      => [
+                    'name'    => 'test-server',
+                    'version' => '1.0.0',
+                ],
+                'capabilities' => [],
+            ],
+        ]));
+
+        $client = new McpClient(
+            $transport,
+            new ClientCapabilities(),
+            'test-client',
+            '1.0.0',
+            'A test MCP client',
+            'Test Client',
+            'https://example.com'
+        );
+
+        $client->connect();
+
+        $messages     = $transport->getSentMessages();
+        $init_message = json_decode($messages[0], true);
+        $client_info  = $init_message['params']['clientInfo'];
+
+        $this->assertSame('test-client', $client_info['name']);
+        $this->assertSame('1.0.0', $client_info['version']);
+        $this->assertSame('A test MCP client', $client_info['description']);
+        $this->assertSame('Test Client', $client_info['title']);
+        $this->assertSame('https://example.com', $client_info['websiteUrl']);
+    }
+
+    /**
+     * Test clientInfo omits description, title, websiteUrl when null.
+     */
+    public function test_connect_withoutImplementationFields_omitsFieldsFromClientInfo(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        $messages     = $transport->getSentMessages();
+        $init_message = json_decode($messages[0], true);
+        $client_info  = $init_message['params']['clientInfo'];
+
+        $this->assertArrayNotHasKey('description', $client_info);
+        $this->assertArrayNotHasKey('title', $client_info);
+        $this->assertArrayNotHasKey('websiteUrl', $client_info);
+    }
+
+    /**
+     * Test clientInfo includes only non-null Implementation fields.
+     */
+    public function test_connect_withPartialImplementationFields_includesOnlyNonNullFields(): void
+    {
+        $transport = new MockTransport();
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 1,
+            'result'  => [
+                'protocolVersion' => '2025-11-25',
+                'serverInfo'      => [
+                    'name'    => 'test-server',
+                    'version' => '1.0.0',
+                ],
+                'capabilities' => [],
+            ],
+        ]));
+
+        $client = new McpClient(
+            $transport,
+            new ClientCapabilities(),
+            'test-client',
+            '1.0.0',
+            'A test MCP client',
+            null,
+            null
+        );
+
+        $client->connect();
+
+        $messages     = $transport->getSentMessages();
+        $init_message = json_decode($messages[0], true);
+        $client_info  = $init_message['params']['clientInfo'];
+
+        $this->assertSame('A test MCP client', $client_info['description']);
+        $this->assertArrayNotHasKey('title', $client_info);
+        $this->assertArrayNotHasKey('websiteUrl', $client_info);
+    }
+
+    // -------------------------------------------------------------------------
+    // Implementation fields: ServerInfo (incoming)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test ServerInfo stores description, title, websiteUrl from server response.
+     */
+    public function test_connect_withServerImplementationFields_storesFieldsInServerInfo(): void
+    {
+        $transport = new MockTransport();
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 1,
+            'result'  => [
+                'protocolVersion' => '2025-11-25',
+                'serverInfo'      => [
+                    'name'        => 'test-server',
+                    'version'     => '1.0.0',
+                    'description' => 'A filesystem access server',
+                    'title'       => 'Filesystem Server',
+                    'websiteUrl'  => 'https://server.example.com',
+                ],
+                'capabilities' => [],
+            ],
+        ]));
+
+        $client = new McpClient(
+            $transport,
+            new ClientCapabilities(),
+            'test-client',
+            '1.0.0'
+        );
+
+        $client->connect();
+
+        $server_info = $client->getServerInfo();
+
+        $this->assertSame('A filesystem access server', $server_info->getDescription());
+        $this->assertSame('Filesystem Server', $server_info->getTitle());
+        $this->assertSame('https://server.example.com', $server_info->getWebsiteUrl());
+    }
+
+    /**
+     * Test ServerInfo returns null for missing Implementation fields.
+     */
+    public function test_connect_withoutServerImplementationFields_returnsNullForFields(): void
+    {
+        [$client] = $this->createConnectedClient([]);
+
+        $server_info = $client->getServerInfo();
+
+        $this->assertNull($server_info->getDescription());
+        $this->assertNull($server_info->getTitle());
+        $this->assertNull($server_info->getWebsiteUrl());
+    }
 }
