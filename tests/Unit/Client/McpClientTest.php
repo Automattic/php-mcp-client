@@ -908,4 +908,93 @@ final class McpClientTest extends TestCase
 
         $client->connect();
     }
+
+    // -------------------------------------------------------------------------
+    // _meta parameter support (3 tests)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test callTool includes _meta with progressToken in request params.
+     */
+    public function test_callTool_withProgressToken_includesMetaInRequest(): void
+    {
+        [$client, $transport] = $this->createConnectedClient(['tools' => new \stdClass()]);
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 2,
+            'result'  => [
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'Done',
+                    ],
+                ],
+            ],
+        ]));
+
+        $client->callTool('my-tool', ['arg' => 'val'], 60.0, ['progressToken' => 'tok-123']);
+
+        $messages     = $transport->getSentMessages();
+        $last_message = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame('tools/call', $last_message['method']);
+        $this->assertArrayHasKey('_meta', $last_message['params']);
+        $this->assertSame('tok-123', $last_message['params']['_meta']['progressToken']);
+        // Verify original params are preserved alongside _meta.
+        $this->assertSame('my-tool', $last_message['params']['name']);
+        $this->assertSame(['arg' => 'val'], $last_message['params']['arguments']);
+    }
+
+    /**
+     * Test callTool without meta does not include _meta in request params.
+     */
+    public function test_callTool_withoutMeta_doesNotIncludeMetaInRequest(): void
+    {
+        [$client, $transport] = $this->createConnectedClient(['tools' => new \stdClass()]);
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 2,
+            'result'  => [
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'Done',
+                    ],
+                ],
+            ],
+        ]));
+
+        $client->callTool('my-tool', ['arg' => 'val']);
+
+        $messages     = $transport->getSentMessages();
+        $last_message = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame('tools/call', $last_message['method']);
+        $this->assertArrayNotHasKey('_meta', $last_message['params']);
+    }
+
+    /**
+     * Test request() merges _meta into params when meta is non-empty.
+     */
+    public function test_request_withMeta_mergesMetaIntoParams(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 2,
+            'result'  => new \stdClass(),
+        ]));
+
+        $client->request('ping', ['key' => 'value'], 30.0, ['progressToken' => 'tok-456']);
+
+        $messages     = $transport->getSentMessages();
+        $last_message = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame('ping', $last_message['method']);
+        $this->assertSame('value', $last_message['params']['key']);
+        $this->assertSame(['progressToken' => 'tok-456'], $last_message['params']['_meta']);
+    }
 }

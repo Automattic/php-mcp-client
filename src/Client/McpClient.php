@@ -197,23 +197,28 @@ class McpClient
     /**
      * Call a tool on the server.
      *
-     * @param string $name The tool name.
+     * @param string               $name      The tool name.
      * @param array<string, mixed> $arguments The tool arguments.
-     * @param float $timeout Request timeout in seconds.
+     * @param float                $timeout   Request timeout in seconds.
+     * @param array<string, mixed>|null $meta Optional protocol-level metadata (e.g. progressToken).
      *
      * @return array<string, mixed> The tool result.
      *
      * @throws McpException When the request fails.
      */
-    public function callTool(string $name, array $arguments = [], float $timeout = 60.0): array
-    {
+    public function callTool(
+        string $name,
+        array $arguments = [],
+        float $timeout = 60.0,
+        ?array $meta = null
+    ): array {
         $this->ensureConnected();
         $this->ensureCapability('tools', 'tools/call');
 
         $result = $this->requestArray('tools/call', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
-        ], $timeout);
+        ], $timeout, $meta ?? []);
         $this->validateResponse('tools/call', $result);
 
         return $result;
@@ -237,21 +242,22 @@ class McpClient
     /**
      * Read a resource from the server.
      *
-     * @param string $uri The resource URI.
-     * @param float $timeout Request timeout in seconds.
+     * @param string               $uri     The resource URI.
+     * @param float                $timeout Request timeout in seconds.
+     * @param array<string, mixed>|null $meta Optional protocol-level metadata (e.g. progressToken).
      *
      * @return array<string, mixed> The resource content.
      *
      * @throws McpException When the request fails.
      */
-    public function readResource(string $uri, float $timeout = 30.0): array
+    public function readResource(string $uri, float $timeout = 30.0, ?array $meta = null): array
     {
         $this->ensureConnected();
         $this->ensureCapability('resources', 'resources/read');
 
         $result = $this->requestArray('resources/read', [
             'uri' => $uri,
-        ], $timeout);
+        ], $timeout, $meta ?? []);
         $this->validateResponse('resources/read', $result);
 
         return $result;
@@ -291,23 +297,28 @@ class McpClient
     /**
      * Get a prompt from the server.
      *
-     * @param string $name The prompt name.
+     * @param string               $name      The prompt name.
      * @param array<string, mixed> $arguments The prompt arguments.
-     * @param float $timeout Request timeout in seconds.
+     * @param float                $timeout   Request timeout in seconds.
+     * @param array<string, mixed>|null $meta Optional protocol-level metadata (e.g. progressToken).
      *
      * @return array<string, mixed> The prompt result.
      *
      * @throws McpException When the request fails.
      */
-    public function getPrompt(string $name, array $arguments = [], float $timeout = 30.0): array
-    {
+    public function getPrompt(
+        string $name,
+        array $arguments = [],
+        float $timeout = 30.0,
+        ?array $meta = null
+    ): array {
         $this->ensureConnected();
         $this->ensureCapability('prompts', 'prompts/get');
 
         $result = $this->requestArray('prompts/get', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
-        ], $timeout);
+        ], $timeout, $meta ?? []);
         $this->validateResponse('prompts/get', $result);
 
         return $result;
@@ -372,17 +383,22 @@ class McpClient
     /**
      * Send a request and wait for response, expecting an array result.
      *
-     * @param string $method The method name.
+     * @param string              $method  The method name.
      * @param array<string, mixed> $params The request parameters.
-     * @param float $timeout Request timeout in seconds.
+     * @param float               $timeout Request timeout in seconds.
+     * @param array<string, mixed> $meta   Optional protocol-level metadata (e.g. progressToken).
      *
      * @return array<string, mixed> The response result.
      *
      * @throws McpException When the request fails or result is not an array.
      */
-    public function requestArray(string $method, array $params = [], float $timeout = 30.0): array
-    {
-        $result = $this->request($method, $params, $timeout);
+    public function requestArray(
+        string $method,
+        array $params = [],
+        float $timeout = 30.0,
+        array $meta = []
+    ): array {
+        $result = $this->request($method, $params, $timeout, $meta);
 
         if (! is_array($result)) {
             throw new McpException("Expected array response for $method, got " . gettype($result));
@@ -394,17 +410,22 @@ class McpClient
     /**
      * Send a request and wait for response.
      *
-     * @param string $method The method name.
+     * @param string              $method  The method name.
      * @param array<string, mixed> $params The request parameters.
-     * @param float $timeout Request timeout in seconds.
+     * @param float               $timeout Request timeout in seconds.
+     * @param array<string, mixed> $meta   Optional protocol-level metadata (e.g. progressToken).
      *
      * @return mixed The response result.
      *
      * @throws McpException When the request fails.
      */
-    public function request(string $method, array $params = [], float $timeout = 30.0)
+    public function request(string $method, array $params = [], float $timeout = 30.0, array $meta = [])
     {
         $this->ensureConnected();
+
+        if (! empty($meta)) {
+            $params['_meta'] = $meta;
+        }
 
         $id      = $this->id_generator->next();
         $request = new Request($id, $method, empty($params) ? null : $params);
