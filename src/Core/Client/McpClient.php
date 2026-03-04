@@ -680,14 +680,6 @@ class McpClient
     }
 
     /**
-     * Validate that a server response contains expected keys for the given method.
-     *
-     * @param string              $method The JSON-RPC method name.
-     * @param array<string, mixed> $result The response result array.
-     *
-     * @throws McpException When the response is missing required fields.
-     */
-    /**
      * Execute a paginated list request with capability enforcement and response validation.
      *
      * @param string      $method     The JSON-RPC method name.
