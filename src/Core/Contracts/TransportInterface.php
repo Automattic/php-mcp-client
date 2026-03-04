@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Core\Contracts;
 
-use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
 
 /**
  * Transport layer abstraction for MCP communication.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Integration\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
 use GalatanOvidiu\PhpMcpClient\Core\Transport\AbstractTransport;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;

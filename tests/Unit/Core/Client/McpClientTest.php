@@ -6,8 +6,8 @@ namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Core\Client;
 
 use GalatanOvidiu\PhpMcpClient\Core\Client\ClientCapabilities;
 use GalatanOvidiu\PhpMcpClient\Core\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\CapabilityException;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\McpException;
+use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
+use GalatanOvidiu\PhpMcpClient\Exception\McpException;
 use PHPUnit\Framework\TestCase;
 
 /**

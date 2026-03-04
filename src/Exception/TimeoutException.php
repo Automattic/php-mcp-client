@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Core\Exception;
+namespace GalatanOvidiu\PhpMcpClient\Exception;
 
 /**
  * Exception thrown when an operation times out.

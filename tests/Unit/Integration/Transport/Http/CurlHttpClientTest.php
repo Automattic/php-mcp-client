@@ -120,7 +120,7 @@ final class CurlHttpClientTest extends TestCase
             $this->fail('Expected HttpClientException was not thrown');
         } catch (HttpClientException $exception) {
             $this->assertInstanceOf(
-                \GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException::class,
+                \GalatanOvidiu\PhpMcpClient\Exception\TransportException::class,
                 $exception
             );
         }

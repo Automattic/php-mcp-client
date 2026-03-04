@@ -6,12 +6,12 @@ namespace GalatanOvidiu\PhpMcpClient\Core\Client;
 
 use GalatanOvidiu\PhpMcpClient\Core\Contracts\MessageHandlerInterface;
 use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\CapabilityException;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\ConnectionException;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\McpException;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\TimeoutException;
-use GalatanOvidiu\PhpMcpClient\Core\Exception\TransportException;
+use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
+use GalatanOvidiu\PhpMcpClient\Exception\ConnectionException;
+use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
+use GalatanOvidiu\PhpMcpClient\Exception\McpException;
+use GalatanOvidiu\PhpMcpClient\Exception\TimeoutException;
+use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
 use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\Error;
 use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\IdGenerator;
 use GalatanOvidiu\PhpMcpClient\Core\JsonRpc\Message;

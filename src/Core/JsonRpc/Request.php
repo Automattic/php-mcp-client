@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Core\JsonRpc;
 
-use GalatanOvidiu\PhpMcpClient\Core\Exception\JsonRpcException;
+use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
 
 /**
  * JSON-RPC 2.0 Request message.
