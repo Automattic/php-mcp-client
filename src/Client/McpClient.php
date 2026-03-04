@@ -680,7 +680,7 @@ class McpClient
         } catch (JsonRpcException $e) {
             $this->logger->error('Failed to parse incoming message', [
                 'error' => $e->getMessage(),
-                'json'  => $json,
+                'json'  => mb_substr($json, 0, 200) . (mb_strlen($json) > 200 ? '...' : ''),
             ]);
         }
     }
