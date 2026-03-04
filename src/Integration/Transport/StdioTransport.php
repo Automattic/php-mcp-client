@@ -32,6 +32,11 @@ class StdioTransport extends AbstractTransport
     private ?array $pipes = null;
 
     /**
+     * Read buffer for incomplete or multi-message chunks.
+     */
+    private string $read_buffer = '';
+
+    /**
      * Create a new stdio transport.
      *
      * @param string $command The command to run the MCP server.
@@ -102,7 +107,8 @@ class StdioTransport extends AbstractTransport
             $this->process = null;
         }
 
-        $this->connected = false;
+        $this->read_buffer = '';
+        $this->connected   = false;
     }
 
     /**
@@ -136,8 +142,14 @@ class StdioTransport extends AbstractTransport
         }
 
         $stdout = $this->pipes[1];
-        $buffer = '';
         $start  = microtime(true);
+
+        // Check if a complete message already exists in the buffer
+        $newline_pos = strpos($this->read_buffer, "\n");
+
+        if ($newline_pos !== false) {
+            return $this->extractMessage($newline_pos);
+        }
 
         while (true) {
             $read   = [ $stdout ];
@@ -191,18 +203,30 @@ class StdioTransport extends AbstractTransport
                 continue;
             }
 
-            $buffer .= $chunk;
+            $this->read_buffer .= $chunk;
 
             // Look for complete message (newline-delimited)
-            $newline_pos = strpos($buffer, "\n");
+            $newline_pos = strpos($this->read_buffer, "\n");
 
             if ($newline_pos !== false) {
-                $message = substr($buffer, 0, $newline_pos);
-
-                // Trim any carriage return
-                return rtrim($message, "\r");
+                return $this->extractMessage($newline_pos);
             }
         }
+    }
+
+    /**
+     * Extract the first complete message from the read buffer.
+     *
+     * @param int $newline_pos Position of the newline delimiter in the buffer.
+     *
+     * @return string The extracted message.
+     */
+    private function extractMessage(int $newline_pos): string
+    {
+        $message           = substr($this->read_buffer, 0, $newline_pos);
+        $this->read_buffer = substr($this->read_buffer, $newline_pos + 1);
+
+        return rtrim($message, "\r");
     }
 
     /**
