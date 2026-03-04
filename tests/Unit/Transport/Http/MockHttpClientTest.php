@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for MockHttpClient.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport\Http\MockHttpClient
+ *
  */
 final class MockHttpClientTest extends TestCase
 {
