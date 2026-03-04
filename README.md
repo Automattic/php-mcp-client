@@ -4,7 +4,7 @@ A PHP implementation of the Model Context Protocol (MCP) client.
 
 ## Requirements
 
-- PHP 8.1 or higher
+- PHP 7.4 or higher
 - Composer
 
 ## Installation

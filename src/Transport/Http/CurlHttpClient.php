@@ -82,7 +82,7 @@ final class CurlHttpClient implements HttpClientInterface
      *
      * @throws HttpClientException When cURL initialization fails.
      */
-    private function initCurl(string $url): \CurlHandle
+    private function initCurl(string $url)
     {
         $curl = curl_init($url);
 
@@ -110,7 +110,7 @@ final class CurlHttpClient implements HttpClientInterface
      *
      * @throws HttpClientException When the request fails.
      */
-    private function executeRequest(\CurlHandle $curl, string $url): HttpResponse
+    private function executeRequest($curl, string $url): HttpResponse
     {
         $raw_response = curl_exec($curl);
 

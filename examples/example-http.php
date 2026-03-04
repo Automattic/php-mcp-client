@@ -68,7 +68,7 @@ $client = new McpClient(
 try {
     // Connect to server
     echo "Connecting to MCP server...\n";
-    $client->connect(timeout: 30.0);
+    $client->connect(30.0);
 
     $server_info = $client->getServerInfo();
     echo "Connected to: {$server_info->getName()} v{$server_info->getVersion()}\n";

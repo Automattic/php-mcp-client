@@ -50,7 +50,7 @@ $client = new McpClient(
 try {
     // Connect to server
     echo "Connecting to MCP server...\n";
-    $client->connect(timeout: 30.0);
+    $client->connect(30.0);
 
     $server_info = $client->getServerInfo();
     echo "Connected to: {$server_info->getName()} v{$server_info->getVersion()}\n";
@@ -108,7 +108,7 @@ try {
                 $lines = explode("\n", trim($content['text']));
                 foreach ($lines as $line) {
                     $line = trim($line);
-                    if (str_starts_with($line, '/')) {
+                    if (strpos($line, '/') === 0) {
                         $allowed_dir = $line;
                         break;
                     }
