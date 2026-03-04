@@ -36,6 +36,21 @@ class McpClient
 {
     public const PROTOCOL_VERSION = '2025-11-25';
 
+    /**
+     * Map of JSON-RPC method names to their required response keys.
+     *
+     * @var array<string, string>
+     */
+    private const RESPONSE_REQUIRED_KEYS = [
+        'tools/list'               => 'tools',
+        'tools/call'               => 'content',
+        'resources/list'           => 'resources',
+        'resources/read'           => 'contents',
+        'resources/templates/list' => 'resourceTemplates',
+        'prompts/list'             => 'prompts',
+        'prompts/get'              => 'messages',
+    ];
+
     private TransportInterface $transport;
     private ClientCapabilities $capabilities;
     private LoggerInterface $logger;
@@ -164,19 +179,7 @@ class McpClient
      */
     public function listTools(?string $cursor = null, float $timeout = 30.0): array
     {
-        $this->ensureConnected();
-        $this->ensureCapability('tools', 'tools/list');
-
-        $params = [];
-
-        if ($cursor !== null) {
-            $params['cursor'] = $cursor;
-        }
-
-        $result = $this->requestArray('tools/list', $params, $timeout);
-        $this->validateResponse('tools/list', $result);
-
-        return $result;
+        return $this->paginatedList('tools/list', 'tools', $cursor, $timeout);
     }
 
     /**
@@ -216,19 +219,7 @@ class McpClient
      */
     public function listResources(?string $cursor = null, float $timeout = 30.0): array
     {
-        $this->ensureConnected();
-        $this->ensureCapability('resources', 'resources/list');
-
-        $params = [];
-
-        if ($cursor !== null) {
-            $params['cursor'] = $cursor;
-        }
-
-        $result = $this->requestArray('resources/list', $params, $timeout);
-        $this->validateResponse('resources/list', $result);
-
-        return $result;
+        return $this->paginatedList('resources/list', 'resources', $cursor, $timeout);
     }
 
     /**
@@ -267,19 +258,7 @@ class McpClient
      */
     public function listResourceTemplates(?string $cursor = null, float $timeout = 30.0): array
     {
-        $this->ensureConnected();
-        $this->ensureCapability('resources', 'resources/templates/list');
-
-        $params = [];
-
-        if ($cursor !== null) {
-            $params['cursor'] = $cursor;
-        }
-
-        $result = $this->requestArray('resources/templates/list', $params, $timeout);
-        $this->validateResponse('resources/templates/list', $result);
-
-        return $result;
+        return $this->paginatedList('resources/templates/list', 'resources', $cursor, $timeout);
     }
 
     /**
@@ -294,19 +273,7 @@ class McpClient
      */
     public function listPrompts(?string $cursor = null, float $timeout = 30.0): array
     {
-        $this->ensureConnected();
-        $this->ensureCapability('prompts', 'prompts/list');
-
-        $params = [];
-
-        if ($cursor !== null) {
-            $params['cursor'] = $cursor;
-        }
-
-        $result = $this->requestArray('prompts/list', $params, $timeout);
-        $this->validateResponse('prompts/list', $result);
-
-        return $result;
+        return $this->paginatedList('prompts/list', 'prompts', $cursor, $timeout);
     }
 
     /**
@@ -720,19 +687,51 @@ class McpClient
      *
      * @throws McpException When the response is missing required fields.
      */
+    /**
+     * Execute a paginated list request with capability enforcement and response validation.
+     *
+     * @param string      $method     The JSON-RPC method name.
+     * @param string      $capability The capability name required for this method.
+     * @param string|null $cursor     Optional pagination cursor.
+     * @param float       $timeout    Request timeout in seconds.
+     *
+     * @return array<string, mixed> The server response.
+     *
+     * @throws McpException When the request fails.
+     * @throws CapabilityException When the server does not support the capability.
+     */
+    private function paginatedList(
+        string $method,
+        string $capability,
+        ?string $cursor = null,
+        float $timeout = 30.0
+    ): array {
+        $this->ensureConnected();
+        $this->ensureCapability($capability, $method);
+
+        $params = [];
+
+        if ($cursor !== null) {
+            $params['cursor'] = $cursor;
+        }
+
+        $result = $this->requestArray($method, $params, $timeout);
+        $this->validateResponse($method, $result);
+
+        return $result;
+    }
+
+    /**
+     * Validate that a server response contains expected keys for the given method.
+     *
+     * @param string              $method The JSON-RPC method name.
+     * @param array<string, mixed> $result The response result array.
+     *
+     * @throws McpException When the response is missing required fields.
+     */
     private function validateResponse(string $method, array $result): void
     {
-        $required_keys = [
-            'tools/list'               => 'tools',
-            'tools/call'               => 'content',
-            'resources/list'           => 'resources',
-            'resources/read'           => 'contents',
-            'resources/templates/list' => 'resourceTemplates',
-            'prompts/list'             => 'prompts',
-            'prompts/get'              => 'messages',
-        ];
-
-        $key = $required_keys[$method] ?? null;
+        $key = self::RESPONSE_REQUIRED_KEYS[$method] ?? null;
 
         if ($key !== null && !\array_key_exists($key, $result)) {
             throw new McpException(
