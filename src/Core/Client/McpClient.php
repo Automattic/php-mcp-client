@@ -173,7 +173,10 @@ class McpClient
             $params['cursor'] = $cursor;
         }
 
-        return $this->requestArray('tools/list', $params, $timeout);
+        $result = $this->requestArray('tools/list', $params, $timeout);
+        $this->validateResponse('tools/list', $result);
+
+        return $result;
     }
 
     /**
@@ -192,10 +195,13 @@ class McpClient
         $this->ensureConnected();
         $this->ensureCapability('tools', 'tools/call');
 
-        return $this->requestArray('tools/call', [
+        $result = $this->requestArray('tools/call', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
         ], $timeout);
+        $this->validateResponse('tools/call', $result);
+
+        return $result;
     }
 
     /**
@@ -219,7 +225,10 @@ class McpClient
             $params['cursor'] = $cursor;
         }
 
-        return $this->requestArray('resources/list', $params, $timeout);
+        $result = $this->requestArray('resources/list', $params, $timeout);
+        $this->validateResponse('resources/list', $result);
+
+        return $result;
     }
 
     /**
@@ -237,9 +246,12 @@ class McpClient
         $this->ensureConnected();
         $this->ensureCapability('resources', 'resources/read');
 
-        return $this->requestArray('resources/read', [
+        $result = $this->requestArray('resources/read', [
             'uri' => $uri,
         ], $timeout);
+        $this->validateResponse('resources/read', $result);
+
+        return $result;
     }
 
     /**
@@ -264,7 +276,10 @@ class McpClient
             $params['cursor'] = $cursor;
         }
 
-        return $this->requestArray('resources/templates/list', $params, $timeout);
+        $result = $this->requestArray('resources/templates/list', $params, $timeout);
+        $this->validateResponse('resources/templates/list', $result);
+
+        return $result;
     }
 
     /**
@@ -288,7 +303,10 @@ class McpClient
             $params['cursor'] = $cursor;
         }
 
-        return $this->requestArray('prompts/list', $params, $timeout);
+        $result = $this->requestArray('prompts/list', $params, $timeout);
+        $this->validateResponse('prompts/list', $result);
+
+        return $result;
     }
 
     /**
@@ -307,10 +325,13 @@ class McpClient
         $this->ensureConnected();
         $this->ensureCapability('prompts', 'prompts/get');
 
-        return $this->requestArray('prompts/get', [
+        $result = $this->requestArray('prompts/get', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
         ], $timeout);
+        $this->validateResponse('prompts/get', $result);
+
+        return $result;
     }
 
     /**
@@ -687,6 +708,35 @@ class McpClient
         if (!($checks[$capability] ?? false)) {
             throw new CapabilityException(
                 "Server does not support '{$capability}' capability required for {$method}"
+            );
+        }
+    }
+
+    /**
+     * Validate that a server response contains expected keys for the given method.
+     *
+     * @param string              $method The JSON-RPC method name.
+     * @param array<string, mixed> $result The response result array.
+     *
+     * @throws McpException When the response is missing required fields.
+     */
+    private function validateResponse(string $method, array $result): void
+    {
+        $required_keys = [
+            'tools/list'               => 'tools',
+            'tools/call'               => 'content',
+            'resources/list'           => 'resources',
+            'resources/read'           => 'contents',
+            'resources/templates/list' => 'resourceTemplates',
+            'prompts/list'             => 'prompts',
+            'prompts/get'              => 'messages',
+        ];
+
+        $key = $required_keys[$method] ?? null;
+
+        if ($key !== null && !\array_key_exists($key, $result)) {
+            throw new McpException(
+                "Invalid response for {$method}: missing required '{$key}' field"
             );
         }
     }
