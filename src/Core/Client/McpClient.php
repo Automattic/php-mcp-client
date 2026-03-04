@@ -6,6 +6,7 @@ namespace GalatanOvidiu\PhpMcpClient\Core\Client;
 
 use GalatanOvidiu\PhpMcpClient\Core\Contracts\MessageHandlerInterface;
 use GalatanOvidiu\PhpMcpClient\Core\Contracts\TransportInterface;
+use GalatanOvidiu\PhpMcpClient\Core\Exception\CapabilityException;
 use GalatanOvidiu\PhpMcpClient\Core\Exception\ConnectionException;
 use GalatanOvidiu\PhpMcpClient\Core\Exception\JsonRpcException;
 use GalatanOvidiu\PhpMcpClient\Core\Exception\McpException;
@@ -162,6 +163,9 @@ class McpClient
      */
     public function listTools(?string $cursor = null, float $timeout = 30.0): array
     {
+        $this->ensureConnected();
+        $this->ensureCapability('tools', 'tools/list');
+
         $params = [];
 
         if ($cursor !== null) {
@@ -184,6 +188,9 @@ class McpClient
      */
     public function callTool(string $name, array $arguments = [], float $timeout = 60.0): array
     {
+        $this->ensureConnected();
+        $this->ensureCapability('tools', 'tools/call');
+
         return $this->requestArray('tools/call', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
@@ -202,6 +209,9 @@ class McpClient
      */
     public function listResources(?string $cursor = null, float $timeout = 30.0): array
     {
+        $this->ensureConnected();
+        $this->ensureCapability('resources', 'resources/list');
+
         $params = [];
 
         if ($cursor !== null) {
@@ -223,6 +233,9 @@ class McpClient
      */
     public function readResource(string $uri, float $timeout = 30.0): array
     {
+        $this->ensureConnected();
+        $this->ensureCapability('resources', 'resources/read');
+
         return $this->requestArray('resources/read', [
             'uri' => $uri,
         ], $timeout);
@@ -240,6 +253,9 @@ class McpClient
      */
     public function listPrompts(?string $cursor = null, float $timeout = 30.0): array
     {
+        $this->ensureConnected();
+        $this->ensureCapability('prompts', 'prompts/list');
+
         $params = [];
 
         if ($cursor !== null) {
@@ -262,6 +278,9 @@ class McpClient
      */
     public function getPrompt(string $name, array $arguments = [], float $timeout = 30.0): array
     {
+        $this->ensureConnected();
+        $this->ensureCapability('prompts', 'prompts/get');
+
         return $this->requestArray('prompts/get', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
@@ -588,6 +607,36 @@ class McpClient
     {
         if (! $this->initialized) {
             throw new ConnectionException('Client is not connected');
+        }
+    }
+
+    /**
+     * Ensure the server supports a required capability.
+     *
+     * @param string $capability The capability name (e.g. 'tools', 'resources').
+     * @param string $method     The MCP method requiring the capability.
+     *
+     * @throws CapabilityException When the server does not support the capability.
+     */
+    private function ensureCapability(string $capability, string $method): void
+    {
+        if ($this->server_info === null) {
+            throw new ConnectionException('Client is not connected');
+        }
+
+        $capabilities = $this->server_info->getCapabilities();
+
+        $checks = [
+            'tools'     => $capabilities->hasTools(),
+            'resources' => $capabilities->hasResources(),
+            'prompts'   => $capabilities->hasPrompts(),
+            'logging'   => $capabilities->hasLogging(),
+        ];
+
+        if (!($checks[$capability] ?? false)) {
+            throw new CapabilityException(
+                "Server does not support '{$capability}' capability required for {$method}"
+            );
         }
     }
 }
