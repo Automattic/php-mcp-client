@@ -588,12 +588,14 @@ class McpClient
             $remaining = $timeout - $elapsed;
 
             if ($remaining <= 0) {
+                $this->sendTimeoutCancellation($request_id);
                 throw new TimeoutException("Request $request_id timed out after $timeout seconds");
             }
 
             $message_json = $this->transport->receive($remaining);
 
             if ($message_json === null) {
+                $this->sendTimeoutCancellation($request_id);
                 throw new TimeoutException("Request $request_id timed out after $timeout seconds");
             }
 
@@ -615,6 +617,34 @@ class McpClient
 
             // Handle other incoming messages (requests/notifications from server)
             $this->handleMessage($message);
+        }
+    }
+
+    /**
+     * Send a cancellation notification for a timed-out request.
+     *
+     * Uses $this->transport->send() directly to avoid ensureConnected() overhead
+     * on the error path. Failures are logged at warning level but never mask
+     * the TimeoutException that will follow.
+     *
+     * @param int|string $request_id The request ID that timed out.
+     */
+    private function sendTimeoutCancellation($request_id): void
+    {
+        try {
+            $notification = new Notification('notifications/cancelled', [
+                'requestId' => $request_id,
+                'reason'    => 'Client timeout',
+            ]);
+
+            $this->transport->send($notification->toJson());
+
+            $this->logger->debug('Sent timeout cancellation', ['requestId' => $request_id]);
+        } catch (Throwable $e) {
+            $this->logger->warning('Failed to send timeout cancellation', [
+                'requestId' => $request_id,
+                'error'     => $e->getMessage(),
+            ]);
         }
     }
 

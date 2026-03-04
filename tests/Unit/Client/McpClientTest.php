@@ -8,6 +8,8 @@ use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
 use GalatanOvidiu\PhpMcpClient\Client\McpClient;
 use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
 use GalatanOvidiu\PhpMcpClient\Exception\McpException;
+use GalatanOvidiu\PhpMcpClient\Exception\TimeoutException;
+use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -1036,5 +1038,57 @@ final class McpClientTest extends TestCase
         $this->assertSame('notifications/cancelled', $last_message['method']);
         $this->assertSame('req-abc', $last_message['params']['requestId']);
         $this->assertArrayNotHasKey('reason', $last_message['params']);
+    }
+
+    // -------------------------------------------------------------------------
+    // Auto-cancellation on timeout (2 tests)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test that waitForResponse sends a cancellation notification before throwing TimeoutException.
+     */
+    public function test_request_onTimeout_sendsCancellationNotification(): void
+    {
+        [$client, $transport] = $this->createConnectedClient(['tools' => new \stdClass()]);
+
+        // Do not queue any response for the tools/call request — receive() returns null → timeout.
+
+        try {
+            $client->callTool('slow-tool', [], 0.1);
+            $this->fail('Expected TimeoutException was not thrown');
+        } catch (TimeoutException $e) {
+            // Expected.
+        }
+
+        $messages = $transport->getSentMessages();
+
+        // Messages: 1) init request, 2) initialized notification, 3) tools/call request, 4) cancellation.
+        $this->assertCount(4, $messages);
+
+        $cancellation = json_decode($messages[3], true);
+
+        $this->assertSame('notifications/cancelled', $cancellation['method']);
+        $this->assertSame(2, $cancellation['params']['requestId']);
+        $this->assertSame('Client timeout', $cancellation['params']['reason']);
+        $this->assertArrayNotHasKey('id', $cancellation);
+    }
+
+    /**
+     * Test that TimeoutException still propagates when cancellation send fails.
+     */
+    public function test_request_onTimeout_stillThrowsTimeoutExceptionIfCancellationFails(): void
+    {
+        [$client, $transport] = $this->createConnectedClient(['tools' => new \stdClass()]);
+
+        // Do not queue any response — will trigger timeout.
+        // The sequence after createConnectedClient is:
+        //   send(tools/call request) → receive() returns null → sendTimeoutCancellation() → send(cancellation)
+        // Use $after=1 so the tools/call send succeeds but the cancellation send throws.
+        $transport->throwOnNextSend(new TransportException('Broken pipe'), 1);
+
+        $this->expectException(TimeoutException::class);
+        $this->expectExceptionMessage('timed out');
+
+        $client->callTool('slow-tool', [], 0.1);
     }
 }

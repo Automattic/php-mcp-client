@@ -35,6 +35,31 @@ final class MockTransport implements TransportInterface
     private array $sent_messages = [];
 
     /**
+     * Exception to throw on a future send() call, if set.
+     */
+    private ?\Throwable $send_exception = null;
+
+    /**
+     * Number of send() calls to allow before throwing the exception.
+     */
+    private int $send_exception_after = 0;
+
+    /**
+     * Set an exception to be thrown on a future send() call.
+     *
+     * The exception is consumed after being thrown (one-shot).
+     * Use $after to skip N send() calls before throwing. Default is 0 (next send).
+     *
+     * @param \Throwable $exception The exception to throw.
+     * @param int        $after     Number of send() calls to allow before throwing.
+     */
+    public function throwOnNextSend(\Throwable $exception, int $after = 0): void
+    {
+        $this->send_exception       = $exception;
+        $this->send_exception_after = $after;
+    }
+
+    /**
      * Queue a JSON response to be returned by receive().
      *
      * Responses are returned in FIFO order.
@@ -99,6 +124,16 @@ final class MockTransport implements TransportInterface
      */
     public function send(string $message): void
     {
+        if ($this->send_exception !== null) {
+            if ($this->send_exception_after <= 0) {
+                $exception            = $this->send_exception;
+                $this->send_exception = null;
+                throw $exception;
+            }
+
+            --$this->send_exception_after;
+        }
+
         $this->sent_messages[] = $message;
     }
 
