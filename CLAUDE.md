@@ -40,28 +40,27 @@ Do not consider a task complete until both checks pass without errors.
 
 ## Architecture
 
-### Core vs Integration Layer Separation
-
-The codebase follows clean architecture principles with strict separation:
-
-- **`src/Core/`** - Platform-agnostic code. Must NOT reference framework-specific APIs, WordPress functions, or transport implementations.
-- **`src/Integration/`** - Transport implementations and framework adapters.
+The codebase uses a flat structure under `src/` with logical grouping by concern:
 
 ### Key Components
 
-**McpClient** (`Core/Client/McpClient.php`) - Main client orchestrating the MCP protocol lifecycle:
+**McpClient** (`Client/McpClient.php`) - Main client orchestrating the MCP protocol lifecycle:
 - Initialization handshake with capability negotiation
 - Request/response handling with timeout support
 - Server-initiated message handling via `MessageHandlerInterface`
 
-**JSON-RPC Layer** (`Core/JsonRpc/`) - Implements JSON-RPC 2.0:
+**JSON-RPC Layer** (`JsonRpc/`) - Implements JSON-RPC 2.0:
 - `Message` - Base class with `fromJson()`/`toJson()` parsing
 - `Request`, `Response`, `Notification` - Message types
 - `Error` - Standard JSON-RPC error codes
 
-**Transport Abstraction** (`Core/Contracts/TransportInterface.php`):
-- `connect()`, `disconnect()`, `send()`, `receive()`
+**Transport** (`Transport/`) - Transport implementations:
+- `TransportInterface` defines `connect()`, `disconnect()`, `send()`, `receive()`
 - `StdioTransport` launches MCP server as subprocess, communicates via stdin/stdout
+
+**Contracts** (`Contracts/`) - Interfaces for transport, message handling, and logging.
+
+**Exception** (`Exception/`) - Domain-specific exceptions.
 
 ### JSON Encoding Gotcha
 
