@@ -164,8 +164,13 @@ final class CurlHttpClient implements HttpClientInterface
      */
     private function parseHeaders(string $raw_headers): array
     {
+        // Handle multiple header blocks (e.g., from 100 Continue responses).
+        // Only parse the last block which contains the final response headers.
+        $blocks     = explode("\r\n\r\n", rtrim($raw_headers, "\r\n"));
+        $last_block = end($blocks);
+
         $headers = [];
-        $lines   = explode("\r\n", $raw_headers);
+        $lines   = explode("\r\n", $last_block);
 
         foreach ($lines as $line) {
             // Skip status line and empty lines

@@ -103,7 +103,27 @@ class StdioTransport extends AbstractTransport
         }
 
         if ($this->process !== null && is_resource($this->process)) {
-            proc_terminate($this->process);
+            proc_terminate($this->process, 15); // SIGTERM
+
+            // Wait up to 2 seconds for graceful exit before escalating to SIGKILL
+            $deadline = microtime(true) + 2.0;
+
+            while (microtime(true) < $deadline) {
+                $status = proc_get_status($this->process);
+
+                if (!$status['running']) {
+                    break;
+                }
+
+                usleep(50000); // 50ms
+            }
+
+            $status = proc_get_status($this->process);
+
+            if ($status['running']) {
+                proc_terminate($this->process, 9); // SIGKILL
+            }
+
             proc_close($this->process);
             $this->process = null;
         }

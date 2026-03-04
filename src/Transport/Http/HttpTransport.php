@@ -120,9 +120,9 @@ class HttpTransport extends AbstractTransport
         $headers = $this->buildRequestHeaders();
 
         $this->logger->debug('Sending HTTP request', [
-            'endpoint'   => $this->endpoint_url,
-            'session_id' => $this->session_id,
-            'message'    => $message,
+            'endpoint'       => $this->endpoint_url,
+            'session_id'     => $this->maskSessionId($this->session_id),
+            'message_length' => strlen($message),
         ]);
 
         try {
@@ -225,15 +225,7 @@ class HttpTransport extends AbstractTransport
     {
         $status_code = $response->getStatusCode();
 
-        // Extract session ID if present
-        $session_id = $response->getHeader('Mcp-Session-Id');
-
-        if ($session_id !== null) {
-            $this->session_id = $session_id;
-            $this->logger->debug('Session ID received', [ 'session_id' => $session_id ]);
-        }
-
-        // Handle error status codes
+        // Handle error status codes before extracting session state
         if ($status_code === 404 && $this->session_id !== null) {
             $this->session_id = null;
             throw new TransportException('Session expired or not found');
@@ -247,12 +239,20 @@ class HttpTransport extends AbstractTransport
             ));
         }
 
+        // Extract session ID if present (only for successful responses)
+        $session_id = $response->getHeader('Mcp-Session-Id');
+
+        if ($session_id !== null) {
+            $this->session_id = $session_id;
+            $this->logger->debug('Session ID received', [ 'session_id' => $this->maskSessionId($session_id) ]);
+        }
+
         // Buffer the response body for receive()
         $body = $response->getBody();
 
         if ($body !== '') {
             $this->buffered_response = $body;
-            $this->logger->debug('Response buffered', [ 'body' => $body ]);
+            $this->logger->debug('Response buffered', [ 'body_length' => strlen($body) ]);
         }
     }
 
@@ -275,6 +275,26 @@ class HttpTransport extends AbstractTransport
     }
 
     /**
+     * Mask a session ID for safe logging.
+     *
+     * @param string|null $session_id The session ID to mask.
+     *
+     * @return string|null The masked session ID, or null.
+     */
+    private function maskSessionId(?string $session_id): ?string
+    {
+        if ($session_id === null) {
+            return null;
+        }
+
+        if (strlen($session_id) <= 8) {
+            return '***';
+        }
+
+        return substr($session_id, 0, 8) . '...';
+    }
+
+    /**
      * Close the MCP session via DELETE request.
      *
      * Errors are logged but not thrown to allow clean disconnection.
@@ -292,7 +312,7 @@ class HttpTransport extends AbstractTransport
 
         $this->logger->debug('Closing session', [
             'endpoint'   => $this->endpoint_url,
-            'session_id' => $this->session_id,
+            'session_id' => $this->maskSessionId($this->session_id),
         ]);
 
         try {
@@ -301,7 +321,7 @@ class HttpTransport extends AbstractTransport
             // Log but don't throw - disconnection should succeed even if DELETE fails
             $this->logger->warning('Failed to close session via DELETE', [
                 'endpoint'   => $this->endpoint_url,
-                'session_id' => $this->session_id,
+                'session_id' => $this->maskSessionId($this->session_id),
                 'error'      => $e->getMessage(),
             ]);
         }
