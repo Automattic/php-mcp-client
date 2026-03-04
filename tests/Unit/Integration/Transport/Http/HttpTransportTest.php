@@ -6,16 +6,16 @@ namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
 use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientException;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpTransport;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpTransport;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for HttpTransport.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpTransport
+ * @covers \GalatanOvidiu\PhpMcpClient\Transport\Http\HttpTransport
  */
 final class HttpTransportTest extends TestCase
 {

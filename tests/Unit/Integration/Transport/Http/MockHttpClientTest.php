@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientException;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientInterface;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientInterface;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse;
 use PHPUnit\Framework\TestCase;
 
 /**

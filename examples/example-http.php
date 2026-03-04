@@ -20,7 +20,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use GalatanOvidiu\PhpMcpClient\Core\Client\ClientCapabilities;
 use GalatanOvidiu\PhpMcpClient\Core\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpTransport;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpTransport;
 
 if ($argc < 2) {
     echo "Usage: php examples/example-http.php <endpoint-url> [bearer-token]\n";

@@ -19,7 +19,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use GalatanOvidiu\PhpMcpClient\Core\Client\ClientCapabilities;
 use GalatanOvidiu\PhpMcpClient\Core\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\StdioTransport;
+use GalatanOvidiu\PhpMcpClient\Transport\StdioTransport;
 
 if ($argc < 2) {
     echo "Usage: php examples/example-stdio.php <server-command> [args...]\n";

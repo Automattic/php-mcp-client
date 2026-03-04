@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Transport\Http;
 
 use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
 

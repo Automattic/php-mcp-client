@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Transport\Http;
 
 /**
  * Immutable value object representing an HTTP response.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Transport\Http;
 
 /**
  * HTTP client implementation using native PHP cURL.

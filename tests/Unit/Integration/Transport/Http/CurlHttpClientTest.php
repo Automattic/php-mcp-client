@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\CurlHttpClient;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientException;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpClientInterface;
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\CurlHttpClient;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,7 +16,7 @@ use PHPUnit\Framework\TestCase;
  * without a real HTTP server. Integration tests with actual HTTP servers should
  * be in a separate test suite.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\CurlHttpClient
+ * @covers \GalatanOvidiu\PhpMcpClient\Transport\Http\CurlHttpClient
  */
 final class CurlHttpClientTest extends TestCase
 {

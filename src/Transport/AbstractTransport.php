@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Core\Transport;
+namespace GalatanOvidiu\PhpMcpClient\Transport;
 
 use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 

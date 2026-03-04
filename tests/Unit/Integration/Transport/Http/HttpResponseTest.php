@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse;
+use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for HttpResponse value object.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Integration\Transport\Http\HttpResponse
+ * @covers \GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse
  */
 final class HttpResponseTest extends TestCase
 {
