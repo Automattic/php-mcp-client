@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use stdClass;
 use Throwable;
+use WP\McpSchema\Server\Logging\Enum\LoggingLevel;
 
 /**
  * MCP Client for communicating with MCP servers.
@@ -322,6 +323,31 @@ class McpClient
     public function ping(float $timeout = 5.0): void
     {
         $this->request('ping', [], $timeout);
+    }
+
+    /**
+     * Set the logging level on the server.
+     *
+     * @param string $level   The logging level (one of LoggingLevel::values()).
+     * @param float  $timeout Request timeout in seconds.
+     *
+     * @throws McpException When the level is invalid or the request fails.
+     * @throws CapabilityException When the server does not support logging.
+     */
+    public function setLoggingLevel(string $level, float $timeout = 30.0): void
+    {
+        $valid_levels = LoggingLevel::values();
+
+        if (!in_array($level, $valid_levels, true)) {
+            throw new McpException(
+                "Invalid logging level '{$level}'. Valid levels: " . implode(', ', $valid_levels)
+            );
+        }
+
+        $this->ensureConnected();
+        $this->ensureCapability('logging', 'logging/setLevel');
+
+        $this->request('logging/setLevel', ['level' => $level], $timeout);
     }
 
     /**
