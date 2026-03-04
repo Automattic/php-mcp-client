@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Core\JsonRpc;
+namespace GalatanOvidiu\PhpMcpClient\JsonRpc;
 
 /**
  * Generates unique request IDs for JSON-RPC messages.

@@ -2,51 +2,34 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Core\JsonRpc;
+namespace GalatanOvidiu\PhpMcpClient\JsonRpc;
 
 use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
 
 /**
- * JSON-RPC 2.0 Request message.
+ * JSON-RPC 2.0 Notification message.
  *
- * Represents a request that expects a response from the server.
+ * Represents a notification that does not expect a response.
  *
  * @since n.e.x.t
  */
-class Request extends Message
+class Notification extends Message
 {
-    /**
-     * @var string|int
-     */
-    private $id;
-
     private string $method;
 
     /** @var array<string, mixed>|null */
     private ?array $params;
 
     /**
-     * Create a new JSON-RPC request.
+     * Create a new JSON-RPC notification.
      *
-     * @param string|int                $id     The request ID.
      * @param string                    $method The method name.
      * @param array<string, mixed>|null $params Optional parameters.
      */
-    public function __construct($id, string $method, ?array $params = null)
+    public function __construct(string $method, ?array $params = null)
     {
-        $this->id     = $id;
         $this->method = $method;
         $this->params = $params;
-    }
-
-    /**
-     * Get the request ID.
-     *
-     * @return string|int
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -58,7 +41,7 @@ class Request extends Message
     }
 
     /**
-     * Get the request parameters.
+     * Get the notification parameters.
      *
      * @return array<string, mixed>|null
      */
@@ -74,7 +57,6 @@ class Request extends Message
     {
         $message = [
             'jsonrpc' => self::JSON_RPC_VERSION,
-            'id'      => $this->id,
             'method'  => $this->method,
         ];
 
@@ -86,7 +68,7 @@ class Request extends Message
     }
 
     /**
-     * Create a request from an associative array.
+     * Create a notification from an associative array.
      *
      * @param array<string, mixed> $data The message data.
      *
@@ -94,12 +76,6 @@ class Request extends Message
      */
     public static function createFromArray(array $data): self
     {
-        $id = $data['id'] ?? null;
-
-        if (!is_string($id) && !is_int($id)) {
-            throw new JsonRpcException('Invalid request ID', JsonRpcException::INVALID_REQUEST);
-        }
-
         $method = $data['method'] ?? null;
 
         if (!is_string($method)) {
@@ -112,6 +88,6 @@ class Request extends Message
             throw new JsonRpcException('Invalid params', JsonRpcException::INVALID_PARAMS);
         }
 
-        return new self($id, $method, $params);
+        return new self($method, $params);
     }
 }
