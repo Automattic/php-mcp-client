@@ -76,8 +76,10 @@ class StdioTransport extends AbstractTransport
 
         $this->process = $process;
 
-        // Set stdout to non-blocking for timeout support
+        // Set stdout and stderr to non-blocking for timeout support
+        // and to prevent deadlocks when the server writes to stderr.
         stream_set_blocking($this->pipes[1], false);
+        stream_set_blocking($this->pipes[2], false);
 
         $this->connected = true;
     }
@@ -150,8 +152,10 @@ class StdioTransport extends AbstractTransport
             return $this->extractMessage($newline_pos);
         }
 
+        $stderr = $this->pipes[2];
+
         while (true) {
-            $read   = [ $stdout ];
+            $read   = [ $stdout, $stderr ];
             $write  = null;
             $except = null;
 
@@ -180,6 +184,9 @@ class StdioTransport extends AbstractTransport
             if ($ready === 0) {
                 return null; // Timeout
             }
+
+            // Drain stderr to prevent pipe buffer deadlocks
+            $this->drainStderr($stderr);
 
             $chunk = fread($stdout, 8192);
 
@@ -239,8 +246,6 @@ class StdioTransport extends AbstractTransport
             return '';
         }
 
-        stream_set_blocking($this->pipes[2], false);
-
         $output = '';
 
         while (( $chunk = fread($this->pipes[2], 8192) ) !== false && $chunk !== '') {
@@ -248,6 +253,21 @@ class StdioTransport extends AbstractTransport
         }
 
         return $output;
+    }
+
+    /**
+     * Drain stderr pipe to prevent buffer-full deadlocks.
+     *
+     * Reads and discards any available stderr data so the server process
+     * does not block when writing to stderr.
+     *
+     * @param resource $stderr The stderr pipe resource.
+     */
+    private function drainStderr($stderr): void
+    {
+        while (( $chunk = fread($stderr, 8192) ) !== false && $chunk !== '') {
+            // Discard stderr output to keep the pipe buffer clear
+        }
     }
 
     /**

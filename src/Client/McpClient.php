@@ -563,8 +563,11 @@ class McpClient
             $this->handleServerRequest($message);
         } elseif ($message instanceof Notification) {
             $this->handleServerNotification($message);
+        } elseif ($message instanceof Response) {
+            $this->logger->warning('Discarding unmatched response', [
+                'id' => $message->getId(),
+            ]);
         }
-        // Responses are handled in waitForResponse
     }
 
     /**

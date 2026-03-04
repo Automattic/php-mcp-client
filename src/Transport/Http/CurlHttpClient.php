@@ -117,7 +117,7 @@ final class CurlHttpClient implements HttpClientInterface
         if ($raw_response === false) {
             $error_code    = curl_errno($curl);
             $error_message = curl_error($curl);
-            curl_close($curl);
+            unset($curl);
 
             throw $this->createCurlException($error_code, $error_message, $url);
         }
@@ -126,7 +126,7 @@ final class CurlHttpClient implements HttpClientInterface
         $status_code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $header_size = (int) curl_getinfo($curl, CURLINFO_HEADER_SIZE);
 
-        curl_close($curl);
+        unset($curl);
 
         $raw_headers = substr($raw_response, 0, $header_size);
         $body        = substr($raw_response, $header_size);

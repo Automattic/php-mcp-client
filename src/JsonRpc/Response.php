@@ -135,7 +135,17 @@ class Response extends Message
             throw new JsonRpcException('Invalid response ID', JsonRpcException::INVALID_REQUEST);
         }
 
-        if (array_key_exists('error', $data)) {
+        $has_result = array_key_exists('result', $data);
+        $has_error  = array_key_exists('error', $data);
+
+        if ($has_result && $has_error) {
+            throw new JsonRpcException(
+                'Invalid response: contains both result and error fields',
+                JsonRpcException::INVALID_REQUEST
+            );
+        }
+
+        if ($has_error) {
             $error_data = $data['error'];
 
             if (!is_array($error_data)) {
