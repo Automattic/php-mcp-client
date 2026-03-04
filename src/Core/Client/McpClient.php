@@ -242,6 +242,31 @@ class McpClient
     }
 
     /**
+     * List available resource templates from the server.
+     *
+     * @param string|null $cursor Optional pagination cursor.
+     * @param float $timeout Request timeout in seconds.
+     *
+     * @return array<string, mixed> The list of resource templates.
+     *
+     * @throws McpException When the request fails.
+     * @throws CapabilityException When server does not support resources.
+     */
+    public function listResourceTemplates(?string $cursor = null, float $timeout = 30.0): array
+    {
+        $this->ensureConnected();
+        $this->ensureCapability('resources', 'resources/templates/list');
+
+        $params = [];
+
+        if ($cursor !== null) {
+            $params['cursor'] = $cursor;
+        }
+
+        return $this->requestArray('resources/templates/list', $params, $timeout);
+    }
+
+    /**
      * List available prompts from the server.
      *
      * @param string|null $cursor Optional pagination cursor.
