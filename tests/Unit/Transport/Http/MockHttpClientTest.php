@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http;
+namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport\Http;
 
 use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException;
 use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientInterface;
@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for MockHttpClient.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Tests\Unit\Integration\Transport\Http\MockHttpClient
+ * @covers \GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport\Http\MockHttpClient
  */
 final class MockHttpClientTest extends TestCase
 {
