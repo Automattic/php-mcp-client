@@ -6,7 +6,9 @@ namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Client;
 
 use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
 use GalatanOvidiu\PhpMcpClient\Client\McpClient;
+use GalatanOvidiu\PhpMcpClient\Contracts\RootsHandlerInterface;
 use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
+use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
 use GalatanOvidiu\PhpMcpClient\Exception\McpException;
 use GalatanOvidiu\PhpMcpClient\Exception\TimeoutException;
 use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
@@ -1090,5 +1092,174 @@ final class McpClientTest extends TestCase
         $this->expectExceptionMessage('timed out');
 
         $client->callTool('slow-tool', [], 0.1);
+    }
+
+    // -------------------------------------------------------------------------
+    // roots/list server request handling (5 tests)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Test roots/list without a handler returns empty roots array.
+     */
+    public function test_rootsList_withoutHandler_returnsEmptyRootsArray(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        // Queue a server-initiated roots/list request.
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 100,
+            'method'  => 'roots/list',
+        ]));
+
+        $client->processMessages();
+
+        $messages      = $transport->getSentMessages();
+        $last_message  = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame('2.0', $last_message['jsonrpc']);
+        $this->assertSame(100, $last_message['id']);
+        $this->assertArrayHasKey('result', $last_message);
+        $this->assertSame(['roots' => []], $last_message['result']);
+    }
+
+    /**
+     * Test roots/list with a registered handler delegates and returns handler result.
+     */
+    public function test_rootsList_withHandler_delegatesToHandler(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        $expected_roots = [
+            ['uri' => 'file:///home/user/project', 'name' => 'My Project'],
+            ['uri' => 'file:///tmp'],
+        ];
+
+        $handler = $this->createMock(RootsHandlerInterface::class);
+        $handler->expects($this->once())
+            ->method('handleListRoots')
+            ->willReturn($expected_roots);
+
+        $client->setRootsHandler($handler);
+
+        // Queue a server-initiated roots/list request.
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 200,
+            'method'  => 'roots/list',
+        ]));
+
+        $client->processMessages();
+
+        $messages      = $transport->getSentMessages();
+        $last_message  = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame(200, $last_message['id']);
+        $this->assertSame(['roots' => $expected_roots], $last_message['result']);
+        $this->assertArrayNotHasKey('error', $last_message);
+    }
+
+    /**
+     * Test roots/list with a handler that throws returns an internal error response.
+     */
+    public function test_rootsList_withHandlerException_returnsInternalError(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        $handler = $this->createMock(RootsHandlerInterface::class);
+        $handler->expects($this->once())
+            ->method('handleListRoots')
+            ->willThrowException(new \RuntimeException('Filesystem not available'));
+
+        $client->setRootsHandler($handler);
+
+        // Queue a server-initiated roots/list request.
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 300,
+            'method'  => 'roots/list',
+        ]));
+
+        $client->processMessages();
+
+        $messages      = $transport->getSentMessages();
+        $last_message  = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame(300, $last_message['id']);
+        $this->assertArrayHasKey('error', $last_message);
+        $this->assertArrayNotHasKey('result', $last_message);
+        $this->assertSame(JsonRpcException::INTERNAL_ERROR, $last_message['error']['code']);
+        $this->assertSame('Filesystem not available', $last_message['error']['message']);
+    }
+
+    /**
+     * Test roots/list replacing handler uses the last registered handler.
+     */
+    public function test_rootsList_withReplacedHandler_usesLastHandler(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        $first_handler = $this->createMock(RootsHandlerInterface::class);
+        $first_handler->expects($this->never())
+            ->method('handleListRoots');
+
+        $second_roots = [
+            ['uri' => 'file:///second'],
+        ];
+
+        $second_handler = $this->createMock(RootsHandlerInterface::class);
+        $second_handler->expects($this->once())
+            ->method('handleListRoots')
+            ->willReturn($second_roots);
+
+        $client->setRootsHandler($first_handler);
+        $client->setRootsHandler($second_handler);
+
+        // Queue a server-initiated roots/list request.
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 400,
+            'method'  => 'roots/list',
+        ]));
+
+        $client->processMessages();
+
+        $messages      = $transport->getSentMessages();
+        $last_message  = json_decode($messages[count($messages) - 1], true);
+
+        $this->assertSame(['roots' => $second_roots], $last_message['result']);
+    }
+
+    /**
+     * Test roots/list is handled before generic MessageHandlerInterface handlers.
+     */
+    public function test_rootsList_bypassesGenericMessageHandler(): void
+    {
+        [$client, $transport] = $this->createConnectedClient([]);
+
+        // Register a generic MessageHandler that supports roots/list.
+        $generic_handler = $this->createMock(\GalatanOvidiu\PhpMcpClient\Contracts\MessageHandlerInterface::class);
+        $generic_handler->method('supports')
+            ->with('roots/list')
+            ->willReturn(true);
+        $generic_handler->expects($this->never())
+            ->method('handleRequest');
+
+        $client->addMessageHandler($generic_handler);
+
+        // Queue a server-initiated roots/list request.
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 500,
+            'method'  => 'roots/list',
+        ]));
+
+        $client->processMessages();
+
+        $messages      = $transport->getSentMessages();
+        $last_message  = json_decode($messages[count($messages) - 1], true);
+
+        // Should use the built-in default (empty roots), not the generic handler.
+        $this->assertSame(['roots' => []], $last_message['result']);
     }
 }

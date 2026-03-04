@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GalatanOvidiu\PhpMcpClient\Client;
 
 use GalatanOvidiu\PhpMcpClient\Contracts\MessageHandlerInterface;
+use GalatanOvidiu\PhpMcpClient\Contracts\RootsHandlerInterface;
 use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
 use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
 use GalatanOvidiu\PhpMcpClient\Exception\ConnectionException;
@@ -62,6 +63,8 @@ class McpClient
     /** @var array<MessageHandlerInterface> */
     private array $message_handlers = [];
 
+    private ?RootsHandlerInterface $roots_handler = null;
+
     private string $client_name;
     private string $client_version;
     private ?string $client_description;
@@ -107,6 +110,20 @@ class McpClient
     public function addMessageHandler(MessageHandlerInterface $handler): void
     {
         $this->message_handlers[] = $handler;
+    }
+
+    /**
+     * Set the handler for server-initiated roots/list requests.
+     *
+     * When a server sends a roots/list request, the registered handler will be
+     * called to provide the list of roots. Without a handler, an empty roots
+     * array is returned as the default response.
+     *
+     * @param RootsHandlerInterface $handler The roots handler.
+     */
+    public function setRootsHandler(RootsHandlerInterface $handler): void
+    {
+        $this->roots_handler = $handler;
     }
 
     /**
@@ -704,6 +721,12 @@ class McpClient
 
         $this->logger->debug('Received server request', [ 'method' => $method ]);
 
+        // Handle roots/list: delegate to roots handler or return empty default.
+        if ($method === 'roots/list') {
+            $this->handleRootsListRequest($request);
+            return;
+        }
+
         foreach ($this->message_handlers as $handler) {
             if ($handler->supports($method)) {
                 try {
@@ -727,6 +750,39 @@ class McpClient
             $request->getId(),
             Error::methodNotFound("Method not found: $method")
         );
+
+        $this->transport->send($response->toJson());
+    }
+
+    /**
+     * Handle a roots/list request from the server.
+     *
+     * Delegates to the registered RootsHandlerInterface if available.
+     * Without a handler, returns an empty roots array as the default.
+     *
+     * @param Request $request The roots/list request.
+     *
+     * @throws TransportException When sending the response fails.
+     * @throws JsonRpcException When encoding the response fails.
+     */
+    private function handleRootsListRequest(Request $request): void
+    {
+        try {
+            $roots = $this->roots_handler !== null
+                ? $this->roots_handler->handleListRoots()
+                : [];
+
+            $response = Response::success($request->getId(), ['roots' => $roots]);
+        } catch (Throwable $e) {
+            $this->logger->error('Error handling roots/list request', [
+                'error' => $e->getMessage(),
+            ]);
+
+            $response = Response::error(
+                $request->getId(),
+                Error::internalError($e->getMessage())
+            );
+        }
 
         $this->transport->send($response->toJson());
     }
