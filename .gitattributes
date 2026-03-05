@@ -1,0 +1,19 @@
+#
+# Exclude these files from release archives.
+# This will also make them unavailable when using Composer with `--prefer-dist`.
+# If you develop for this repo using Composer, use `--prefer-source`.
+#
+# @see https://git-scm.com/docs/gitattributes
+# @see https://blog.madewithlove.be/post/gitattributes/
+#
+/.editorconfig           export-ignore
+/.gitattributes          export-ignore
+/.github/                export-ignore
+/.gitignore              export-ignore
+/CLAUDE.md               export-ignore
+/docs/                   export-ignore
+/examples/               export-ignore
+/phpcs.xml               export-ignore
+/phpstan.neon.dist       export-ignore
+/phpunit.xml.dist        export-ignore
+/tests/                  export-ignore
