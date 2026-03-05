@@ -49,9 +49,9 @@ Connect to an MCP server running as a local subprocess:
 ```php
 <?php
 
-use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Transport\StdioTransport;
+use Automattic\PhpMcpClient\Client\ClientCapabilities;
+use Automattic\PhpMcpClient\Client\McpClient;
+use Automattic\PhpMcpClient\Transport\StdioTransport;
 
 $transport    = new StdioTransport('npx', ['-y', '@modelcontextprotocol/server-filesystem', '/tmp']);
 $capabilities = new ClientCapabilities();
@@ -73,9 +73,9 @@ Connect to a remote MCP server over HTTP:
 ```php
 <?php
 
-use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpTransport;
+use Automattic\PhpMcpClient\Client\ClientCapabilities;
+use Automattic\PhpMcpClient\Client\McpClient;
+use Automattic\PhpMcpClient\Transport\Http\HttpTransport;
 
 $transport = new HttpTransport(
     'https://mcp.example.com/api',

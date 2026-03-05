@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Client;
+namespace Automattic\PhpMcpClient\Tests\Unit\Client;
 
-use GalatanOvidiu\PhpMcpClient\Client\ServerCapabilities;
+use Automattic\PhpMcpClient\Client\ServerCapabilities;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for ServerCapabilities value object.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Client\ServerCapabilities
+ * @covers \Automattic\PhpMcpClient\Client\ServerCapabilities
  */
 final class ServerCapabilitiesTest extends TestCase
 {

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\JsonRpc;
+namespace Automattic\PhpMcpClient\Tests\Unit\JsonRpc;
 
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Message;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Notification;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Request;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Response;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\JsonRpc\Message;
+use Automattic\PhpMcpClient\JsonRpc\Notification;
+use Automattic\PhpMcpClient\JsonRpc\Request;
+use Automattic\PhpMcpClient\JsonRpc\Response;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for Message abstract class (fromJson / fromArray dispatch).
  *
- * @covers \GalatanOvidiu\PhpMcpClient\JsonRpc\Message
+ * @covers \Automattic\PhpMcpClient\JsonRpc\Message
  */
 final class MessageTest extends TestCase
 {

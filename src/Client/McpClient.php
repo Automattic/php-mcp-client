@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Client;
+namespace Automattic\PhpMcpClient\Client;
 
-use GalatanOvidiu\PhpMcpClient\Contracts\MessageHandlerInterface;
-use GalatanOvidiu\PhpMcpClient\Contracts\RootsHandlerInterface;
-use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
-use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
-use GalatanOvidiu\PhpMcpClient\Exception\ConnectionException;
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\Exception\McpException;
-use GalatanOvidiu\PhpMcpClient\Exception\TimeoutException;
-use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Error;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\IdGenerator;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Message;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Notification;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Request;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Response;
+use Automattic\PhpMcpClient\Contracts\MessageHandlerInterface;
+use Automattic\PhpMcpClient\Contracts\RootsHandlerInterface;
+use Automattic\PhpMcpClient\Contracts\TransportInterface;
+use Automattic\PhpMcpClient\Exception\CapabilityException;
+use Automattic\PhpMcpClient\Exception\ConnectionException;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\Exception\McpException;
+use Automattic\PhpMcpClient\Exception\TimeoutException;
+use Automattic\PhpMcpClient\Exception\TransportException;
+use Automattic\PhpMcpClient\JsonRpc\Error;
+use Automattic\PhpMcpClient\JsonRpc\IdGenerator;
+use Automattic\PhpMcpClient\JsonRpc\Message;
+use Automattic\PhpMcpClient\JsonRpc\Notification;
+use Automattic\PhpMcpClient\JsonRpc\Request;
+use Automattic\PhpMcpClient\JsonRpc\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use stdClass;

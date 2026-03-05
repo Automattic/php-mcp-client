@@ -9,9 +9,9 @@ Every MCP session follows the same pattern: create a transport, configure capabi
 ```php
 <?php
 
-use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Transport\StdioTransport;
+use Automattic\PhpMcpClient\Client\ClientCapabilities;
+use Automattic\PhpMcpClient\Client\McpClient;
+use Automattic\PhpMcpClient\Transport\StdioTransport;
 
 // 1. Create a transport
 $transport = new StdioTransport('npx', ['-y', '@modelcontextprotocol/server-filesystem', '/tmp']);

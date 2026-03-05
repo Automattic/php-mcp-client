@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\JsonRpc;
+namespace Automattic\PhpMcpClient\Tests\Unit\JsonRpc;
 
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Request;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\JsonRpc\Request;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for Request value object.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\JsonRpc\Request
+ * @covers \Automattic\PhpMcpClient\JsonRpc\Request
  */
 final class RequestTest extends TestCase
 {

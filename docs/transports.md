@@ -19,7 +19,7 @@ Launches the MCP server as a subprocess and communicates over stdin/stdout using
 ### Basic usage
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Transport\StdioTransport;
+use Automattic\PhpMcpClient\Transport\StdioTransport;
 
 $transport = new StdioTransport('npx', ['-y', '@modelcontextprotocol/server-filesystem', '/tmp']);
 ```
@@ -71,7 +71,7 @@ Communicates with a remote MCP server over HTTP POST requests. Manages session s
 ### Basic usage
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpTransport;
+use Automattic\PhpMcpClient\Transport\Http\HttpTransport;
 
 $transport = new HttpTransport('https://mcp.example.com/api');
 ```
@@ -112,7 +112,7 @@ If the server returns 404 with an existing session ID, the transport treats it a
 The default `CurlHttpClient` works for most cases. You can configure it:
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Transport\Http\CurlHttpClient;
+use Automattic\PhpMcpClient\Transport\Http\CurlHttpClient;
 
 $http_client = new CurlHttpClient(
     60,    // request timeout in seconds (default: 30)
@@ -130,8 +130,8 @@ $transport = new HttpTransport('https://mcp.example.com/api', $http_client);
 Implement `HttpClientInterface` to use Guzzle, Symfony HTTP Client, or any other library:
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientInterface;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse;
+use Automattic\PhpMcpClient\Transport\Http\HttpClientInterface;
+use Automattic\PhpMcpClient\Transport\Http\HttpResponse;
 
 class GuzzleHttpClient implements HttpClientInterface
 {
@@ -188,7 +188,7 @@ $transport = new HttpTransport(
 Implement `TransportInterface` to create your own transport:
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
+use Automattic\PhpMcpClient\Contracts\TransportInterface;
 
 class MyTransport implements TransportInterface
 {

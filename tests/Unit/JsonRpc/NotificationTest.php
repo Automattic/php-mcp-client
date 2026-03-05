@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\JsonRpc;
+namespace Automattic\PhpMcpClient\Tests\Unit\JsonRpc;
 
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\JsonRpc\Notification;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\JsonRpc\Notification;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for Notification value object.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\JsonRpc\Notification
+ * @covers \Automattic\PhpMcpClient\JsonRpc\Notification
  */
 final class NotificationTest extends TestCase
 {

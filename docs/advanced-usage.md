@@ -7,7 +7,7 @@ This guide covers features you will need when building production integrations: 
 Capabilities tell the server what your client supports. Configure them before connecting:
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
+use Automattic\PhpMcpClient\Client\ClientCapabilities;
 
 $capabilities = (new ClientCapabilities())
     ->withRoots()        // Advertise roots support
@@ -37,7 +37,7 @@ MCP servers can send requests and notifications to the client at any time. Regis
 ### Implementing a handler
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Contracts\MessageHandlerInterface;
+use Automattic\PhpMcpClient\Contracts\MessageHandlerInterface;
 
 class LoggingHandler implements MessageHandlerInterface
 {
@@ -95,7 +95,7 @@ When a server sends a `roots/list` request, the client can respond with a list o
 ### Implementing the roots handler
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Contracts\RootsHandlerInterface;
+use Automattic\PhpMcpClient\Contracts\RootsHandlerInterface;
 
 class ProjectRootsHandler implements RootsHandlerInterface
 {
@@ -138,7 +138,7 @@ When a request times out, the client automatically sends a `notifications/cancel
 try {
     // If this times out, a cancellation is sent automatically
     $result = $client->callTool('slow_tool', ['data' => 'large'], 10.0);
-} catch (\GalatanOvidiu\PhpMcpClient\Exception\TimeoutException $e) {
+} catch (\Automattic\PhpMcpClient\Exception\TimeoutException $e) {
     // Server has been notified to cancel
     echo "Request timed out: " . $e->getMessage() . "\n";
 }
@@ -212,12 +212,12 @@ McpException                    Base class for all MCP errors
 ### Handling specific errors
 
 ```php
-use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
-use GalatanOvidiu\PhpMcpClient\Exception\ConnectionException;
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\Exception\McpException;
-use GalatanOvidiu\PhpMcpClient\Exception\TimeoutException;
-use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
+use Automattic\PhpMcpClient\Exception\CapabilityException;
+use Automattic\PhpMcpClient\Exception\ConnectionException;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\Exception\McpException;
+use Automattic\PhpMcpClient\Exception\TimeoutException;
+use Automattic\PhpMcpClient\Exception\TransportException;
 
 try {
     $result = $client->callTool('my_tool', ['arg' => 'value']);
@@ -303,10 +303,10 @@ Putting it all together — a client that connects with full capabilities, handl
 ```php
 <?php
 
-use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Exception\McpException;
-use GalatanOvidiu\PhpMcpClient\Transport\StdioTransport;
+use Automattic\PhpMcpClient\Client\ClientCapabilities;
+use Automattic\PhpMcpClient\Client\McpClient;
+use Automattic\PhpMcpClient\Exception\McpException;
+use Automattic\PhpMcpClient\Transport\StdioTransport;
 
 $transport    = new StdioTransport('npx', ['-y', '@modelcontextprotocol/server-filesystem', '/tmp']);
 $capabilities = (new ClientCapabilities())->withRoots();

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Transport\Http;
+namespace Automattic\PhpMcpClient\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
-use GalatanOvidiu\PhpMcpClient\Transport\AbstractTransport;
+use Automattic\PhpMcpClient\Exception\TransportException;
+use Automattic\PhpMcpClient\Transport\AbstractTransport;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 

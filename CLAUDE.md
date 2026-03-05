@@ -71,7 +71,7 @@ MCP servers expect empty objects as `{}` not `[]`. Use `stdClass` or `(object)` 
 
 ## Namespace
 
-`GalatanOvidiu\PhpMcpClient\` maps to `src/` via PSR-4.
+`Automattic\PhpMcpClient\` maps to `src/` via PSR-4.
 
 ## Dependencies
 

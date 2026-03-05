@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Transport;
+namespace Automattic\PhpMcpClient\Transport;
 
-use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
+use Automattic\PhpMcpClient\Contracts\TransportInterface;
 
 /**
  * Base abstract transport implementation.

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport\Http;
+namespace Automattic\PhpMcpClient\Tests\Unit\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse;
+use Automattic\PhpMcpClient\Transport\Http\HttpResponse;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for HttpResponse value object.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse
+ * @covers \Automattic\PhpMcpClient\Transport\Http\HttpResponse
  */
 final class HttpResponseTest extends TestCase
 {

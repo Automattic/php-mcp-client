@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport\Http;
+namespace Automattic\PhpMcpClient\Tests\Unit\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException;
+use Automattic\PhpMcpClient\Exception\TransportException;
+use Automattic\PhpMcpClient\Transport\Http\HttpClientException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
  * Unit tests for HttpClientException.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException
+ * @covers \Automattic\PhpMcpClient\Transport\Http\HttpClientException
  */
 final class HttpClientExceptionTest extends TestCase
 {

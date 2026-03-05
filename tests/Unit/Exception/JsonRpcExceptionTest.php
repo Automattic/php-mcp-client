@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Exception;
+namespace Automattic\PhpMcpClient\Tests\Unit\Exception;
 
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\Exception\McpException;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\Exception\McpException;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for JsonRpcException.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException
+ * @covers \Automattic\PhpMcpClient\Exception\JsonRpcException
  */
 final class JsonRpcExceptionTest extends TestCase
 {

@@ -18,9 +18,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpTransport;
+use Automattic\PhpMcpClient\Client\ClientCapabilities;
+use Automattic\PhpMcpClient\Client\McpClient;
+use Automattic\PhpMcpClient\Transport\Http\HttpTransport;
 
 if ($argc < 2) {
     echo "Usage: php examples/example-http.php <endpoint-url> [bearer-token]\n";

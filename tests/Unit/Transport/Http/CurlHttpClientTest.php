@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport\Http;
+namespace Automattic\PhpMcpClient\Tests\Unit\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Transport\Http\CurlHttpClient;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientInterface;
+use Automattic\PhpMcpClient\Transport\Http\CurlHttpClient;
+use Automattic\PhpMcpClient\Transport\Http\HttpClientException;
+use Automattic\PhpMcpClient\Transport\Http\HttpClientInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
  * without a real HTTP server. Integration tests with actual HTTP servers should
  * be in a separate test suite.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Transport\Http\CurlHttpClient
+ * @covers \Automattic\PhpMcpClient\Transport\Http\CurlHttpClient
  */
 final class CurlHttpClientTest extends TestCase
 {
@@ -119,7 +119,7 @@ final class CurlHttpClientTest extends TestCase
             $this->fail('Expected HttpClientException was not thrown');
         } catch (HttpClientException $exception) {
             $this->assertInstanceOf(
-                \GalatanOvidiu\PhpMcpClient\Exception\TransportException::class,
+                \Automattic\PhpMcpClient\Exception\TransportException::class,
                 $exception
             );
         }

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\JsonRpc;
+namespace Automattic\PhpMcpClient\Tests\Unit\JsonRpc;
 
-use GalatanOvidiu\PhpMcpClient\JsonRpc\IdGenerator;
+use Automattic\PhpMcpClient\JsonRpc\IdGenerator;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for IdGenerator.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\JsonRpc\IdGenerator
+ * @covers \Automattic\PhpMcpClient\JsonRpc\IdGenerator
  */
 final class IdGeneratorTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Client;
+namespace Automattic\PhpMcpClient\Client;
 
 /**
  * MCP client capabilities configuration.

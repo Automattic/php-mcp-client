@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\JsonRpc;
+namespace Automattic\PhpMcpClient\JsonRpc;
 
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
 
 /**
  * JSON-RPC 2.0 Notification message.

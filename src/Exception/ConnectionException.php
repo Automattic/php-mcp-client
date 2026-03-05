@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Exception;
+namespace Automattic\PhpMcpClient\Exception;
 
 /**
  * Exception thrown when MCP connection fails or is lost.

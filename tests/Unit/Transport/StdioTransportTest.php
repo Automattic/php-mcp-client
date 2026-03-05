@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport;
+namespace Automattic\PhpMcpClient\Tests\Unit\Transport;
 
-use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
-use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
-use GalatanOvidiu\PhpMcpClient\Transport\StdioTransport;
+use Automattic\PhpMcpClient\Contracts\TransportInterface;
+use Automattic\PhpMcpClient\Exception\TransportException;
+use Automattic\PhpMcpClient\Transport\StdioTransport;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -15,7 +15,7 @@ use ReflectionClass;
  *
  * Uses `cat` as a simple echo server for subprocess communication tests.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Transport\StdioTransport
+ * @covers \Automattic\PhpMcpClient\Transport\StdioTransport
  */
 final class StdioTransportTest extends TestCase
 {

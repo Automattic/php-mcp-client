@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Client;
+namespace Automattic\PhpMcpClient\Tests\Unit\Client;
 
-use GalatanOvidiu\PhpMcpClient\Contracts\TransportInterface;
+use Automattic\PhpMcpClient\Contracts\TransportInterface;
 
 /**
  * Mock transport for testing McpClient without a real MCP server.

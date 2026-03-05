@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Exception;
+namespace Automattic\PhpMcpClient\Exception;
 
 /**
  * Exception for JSON-RPC protocol errors.

@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Client;
+namespace Automattic\PhpMcpClient\Tests\Unit\Client;
 
-use GalatanOvidiu\PhpMcpClient\Client\ClientCapabilities;
-use GalatanOvidiu\PhpMcpClient\Client\McpClient;
-use GalatanOvidiu\PhpMcpClient\Contracts\RootsHandlerInterface;
-use GalatanOvidiu\PhpMcpClient\Exception\CapabilityException;
-use GalatanOvidiu\PhpMcpClient\Exception\JsonRpcException;
-use GalatanOvidiu\PhpMcpClient\Exception\McpException;
-use GalatanOvidiu\PhpMcpClient\Exception\TimeoutException;
-use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
+use Automattic\PhpMcpClient\Client\ClientCapabilities;
+use Automattic\PhpMcpClient\Client\McpClient;
+use Automattic\PhpMcpClient\Contracts\RootsHandlerInterface;
+use Automattic\PhpMcpClient\Exception\CapabilityException;
+use Automattic\PhpMcpClient\Exception\JsonRpcException;
+use Automattic\PhpMcpClient\Exception\McpException;
+use Automattic\PhpMcpClient\Exception\TimeoutException;
+use Automattic\PhpMcpClient\Exception\TransportException;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Unit tests for McpClient.
  *
- * @covers \GalatanOvidiu\PhpMcpClient\Client\McpClient
+ * @covers \Automattic\PhpMcpClient\Client\McpClient
  */
 final class McpClientTest extends TestCase
 {
@@ -1238,7 +1238,7 @@ final class McpClientTest extends TestCase
         [$client, $transport] = $this->createConnectedClient([]);
 
         // Register a generic MessageHandler that supports roots/list.
-        $generic_handler = $this->createMock(\GalatanOvidiu\PhpMcpClient\Contracts\MessageHandlerInterface::class);
+        $generic_handler = $this->createMock(\Automattic\PhpMcpClient\Contracts\MessageHandlerInterface::class);
         $generic_handler->method('supports')
             ->with('roots/list')
             ->willReturn(true);

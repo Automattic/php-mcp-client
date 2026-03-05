@@ -1,5 +1,5 @@
 {
-    "name": "galatanovidiu/php-mcp-client",
+    "name": "automattic/php-mcp-client",
     "description": "A PHP MCP (Model Context Protocol) client implementation",
     "type": "library",
     "license": "GPL-2.0-or-later",
@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "GalatanOvidiu\\PhpMcpClient\\": "src/"
+            "Automattic\\PhpMcpClient\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "GalatanOvidiu\\PhpMcpClient\\Tests\\": "tests/"
+            "Automattic\\PhpMcpClient\\Tests\\": "tests/"
         }
     },
     "config": {

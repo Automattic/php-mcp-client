@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Transport\Http;
+namespace Automattic\PhpMcpClient\Transport\Http;
 
 /**
  * Contract for HTTP client implementations.

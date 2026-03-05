@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Transport\Http;
+namespace Automattic\PhpMcpClient\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Exception\TransportException;
+use Automattic\PhpMcpClient\Exception\TransportException;
 
 /**
  * Exception thrown when HTTP client operations fail.

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace GalatanOvidiu\PhpMcpClient\Tests\Unit\Transport\Http;
+namespace Automattic\PhpMcpClient\Tests\Unit\Transport\Http;
 
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientException;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpClientInterface;
-use GalatanOvidiu\PhpMcpClient\Transport\Http\HttpResponse;
+use Automattic\PhpMcpClient\Transport\Http\HttpClientException;
+use Automattic\PhpMcpClient\Transport\Http\HttpClientInterface;
+use Automattic\PhpMcpClient\Transport\Http\HttpResponse;
 
 /**
  * Mock HTTP client for testing HttpTransport without network calls.
