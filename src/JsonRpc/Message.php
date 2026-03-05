@@ -64,6 +64,46 @@ abstract class Message
     }
 
     /**
+     * Extract and validate a method string from message data.
+     *
+     * @param array<string, mixed> $data The message data.
+     *
+     * @return string The validated method name.
+     *
+     * @throws JsonRpcException When method is missing or invalid.
+     */
+    protected static function extractMethod(array $data): string
+    {
+        $method = $data['method'] ?? null;
+
+        if (!is_string($method)) {
+            throw new JsonRpcException('Invalid method', JsonRpcException::INVALID_REQUEST);
+        }
+
+        return $method;
+    }
+
+    /**
+     * Extract and validate optional params from message data.
+     *
+     * @param array<string, mixed> $data The message data.
+     *
+     * @return array<string, mixed>|null The validated params, or null.
+     *
+     * @throws JsonRpcException When params are present but not an array.
+     */
+    protected static function extractParams(array $data): ?array
+    {
+        $params = $data['params'] ?? null;
+
+        if ($params !== null && !is_array($params)) {
+            throw new JsonRpcException('Invalid params', JsonRpcException::INVALID_PARAMS);
+        }
+
+        return $params;
+    }
+
+    /**
      * Create a message from an associative array.
      *
      * @param array<string, mixed> $data The message data.

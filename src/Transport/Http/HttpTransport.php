@@ -45,11 +45,11 @@ class HttpTransport extends AbstractTransport
     private ?string $buffered_response = null;
 
     /**
-     * Custom headers to include in all requests.
+     * Precomputed base headers (custom headers + Content-Type + Accept).
      *
      * @var array<string, string>
      */
-    private array $custom_headers = [];
+    private array $base_headers = [];
 
     /**
      * Create a new HTTP transport.
@@ -65,10 +65,13 @@ class HttpTransport extends AbstractTransport
         ?LoggerInterface $logger = null,
         array $custom_headers = []
     ) {
-        $this->endpoint_url   = $endpoint_url;
-        $this->http_client    = $http_client ?? new CurlHttpClient();
-        $this->logger         = $logger ?? new NullLogger();
-        $this->custom_headers = $custom_headers;
+        $this->endpoint_url = $endpoint_url;
+        $this->http_client  = $http_client ?? new CurlHttpClient();
+        $this->logger       = $logger ?? new NullLogger();
+        $this->base_headers = array_merge($custom_headers, [
+            'Content-Type' => 'application/json',
+            'Accept'       => 'application/json',
+        ]);
     }
 
     /**
@@ -202,10 +205,7 @@ class HttpTransport extends AbstractTransport
      */
     private function buildRequestHeaders(): array
     {
-        $headers = array_merge($this->custom_headers, [
-            'Content-Type' => 'application/json',
-            'Accept'       => 'application/json',
-        ]);
+        $headers = $this->base_headers;
 
         if ($this->session_id !== null) {
             $headers['Mcp-Session-Id'] = $this->session_id;
@@ -301,14 +301,11 @@ class HttpTransport extends AbstractTransport
      */
     private function closeSession(): void
     {
-        // This method is only called when session_id is not null
-        if ($this->session_id === null) {
-            return;
-        }
+        /** @var string $session_id Already verified non-null by caller. */
+        $session_id = $this->session_id;
 
-        $headers = array_merge($this->custom_headers, [
-            'Mcp-Session-Id' => $this->session_id,
-        ]);
+        $headers                   = $this->base_headers;
+        $headers['Mcp-Session-Id'] = $session_id;
 
         $this->logger->debug('Closing session', [
             'endpoint'   => $this->endpoint_url,

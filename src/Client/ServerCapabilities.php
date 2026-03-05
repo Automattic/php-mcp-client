@@ -69,9 +69,7 @@ class ServerCapabilities
      */
     public function toolsListChanged(): bool
     {
-        $tools = $this->raw['tools'] ?? null;
-
-        return is_array($tools) && isset($tools['listChanged']) && $tools['listChanged'] === true;
+        return $this->capabilityFlag('tools', 'listChanged');
     }
 
     /**
@@ -79,9 +77,7 @@ class ServerCapabilities
      */
     public function resourcesListChanged(): bool
     {
-        $resources = $this->raw['resources'] ?? null;
-
-        return is_array($resources) && isset($resources['listChanged']) && $resources['listChanged'] === true;
+        return $this->capabilityFlag('resources', 'listChanged');
     }
 
     /**
@@ -89,9 +85,7 @@ class ServerCapabilities
      */
     public function resourcesSubscribe(): bool
     {
-        $resources = $this->raw['resources'] ?? null;
-
-        return is_array($resources) && isset($resources['subscribe']) && $resources['subscribe'] === true;
+        return $this->capabilityFlag('resources', 'subscribe');
     }
 
     /**
@@ -99,9 +93,20 @@ class ServerCapabilities
      */
     public function promptsListChanged(): bool
     {
-        $prompts = $this->raw['prompts'] ?? null;
+        return $this->capabilityFlag('prompts', 'listChanged');
+    }
 
-        return is_array($prompts) && isset($prompts['listChanged']) && $prompts['listChanged'] === true;
+    /**
+     * Check if a capability has a specific boolean flag enabled.
+     *
+     * @param string $capability The top-level capability key.
+     * @param string $flag       The boolean sub-key to check.
+     */
+    private function capabilityFlag(string $capability, string $flag): bool
+    {
+        $cap = $this->raw[$capability] ?? null;
+
+        return is_array($cap) && isset($cap[$flag]) && $cap[$flag] === true;
     }
 
     /**

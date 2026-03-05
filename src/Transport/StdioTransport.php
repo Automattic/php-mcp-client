@@ -107,20 +107,20 @@ class StdioTransport extends AbstractTransport
 
             // Wait up to 2 seconds for graceful exit before escalating to SIGKILL
             $deadline = microtime(true) + 2.0;
+            $running  = true;
 
             while (microtime(true) < $deadline) {
                 $status = proc_get_status($this->process);
 
                 if (!$status['running']) {
+                    $running = false;
                     break;
                 }
 
                 usleep(50000); // 50ms
             }
 
-            $status = proc_get_status($this->process);
-
-            if ($status['running']) {
+            if ($running) {
                 proc_terminate($this->process, 9); // SIGKILL
             }
 
@@ -205,8 +205,10 @@ class StdioTransport extends AbstractTransport
                 return null; // Timeout
             }
 
-            // Drain stderr to prevent pipe buffer deadlocks
-            $this->drainStderr($stderr);
+            // Drain stderr to prevent pipe buffer deadlocks (only if stderr is ready)
+            if (in_array($stderr, $read, true)) {
+                $this->drainStderr($stderr);
+            }
 
             $chunk = fread($stdout, 8192);
 
@@ -266,13 +268,7 @@ class StdioTransport extends AbstractTransport
             return '';
         }
 
-        $output = '';
-
-        while (( $chunk = fread($this->pipes[2], 8192) ) !== false && $chunk !== '') {
-            $output .= $chunk;
-        }
-
-        return $output;
+        return $this->consumeStream($this->pipes[2]);
     }
 
     /**
@@ -285,9 +281,25 @@ class StdioTransport extends AbstractTransport
      */
     private function drainStderr($stderr): void
     {
-        while (( $chunk = fread($stderr, 8192) ) !== false && $chunk !== '') {
-            // Discard stderr output to keep the pipe buffer clear
+        $this->consumeStream($stderr);
+    }
+
+    /**
+     * Read all available data from a non-blocking stream.
+     *
+     * @param resource $stream The stream resource to read from.
+     *
+     * @return string The data read from the stream.
+     */
+    private function consumeStream($stream): string
+    {
+        $output = '';
+
+        while (( $chunk = fread($stream, 8192) ) !== false && $chunk !== '') {
+            $output .= $chunk;
         }
+
+        return $output;
     }
 
     /**

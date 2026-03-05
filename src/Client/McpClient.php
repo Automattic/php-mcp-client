@@ -234,7 +234,7 @@ class McpClient
 
         $result = $this->requestArray('tools/call', [
             'name'      => $name,
-            'arguments' => empty($arguments) ? new stdClass() : $arguments,
+            'arguments' => $this->normalizeArguments($arguments),
         ], $timeout, $meta);
         $this->validateResponse('tools/call', $result);
 
@@ -334,7 +334,7 @@ class McpClient
 
         $result = $this->requestArray('prompts/get', [
             'name'      => $name,
-            'arguments' => empty($arguments) ? new stdClass() : $arguments,
+            'arguments' => $this->normalizeArguments($arguments),
         ], $timeout, $meta);
         $this->validateResponse('prompts/get', $result);
 
@@ -835,14 +835,24 @@ class McpClient
 
         $capabilities = $this->server_info->getCapabilities();
 
-        $checks = [
-            'tools'     => $capabilities->hasTools(),
-            'resources' => $capabilities->hasResources(),
-            'prompts'   => $capabilities->hasPrompts(),
-            'logging'   => $capabilities->hasLogging(),
-        ];
+        switch ($capability) {
+            case 'tools':
+                $supported = $capabilities->hasTools();
+                break;
+            case 'resources':
+                $supported = $capabilities->hasResources();
+                break;
+            case 'prompts':
+                $supported = $capabilities->hasPrompts();
+                break;
+            case 'logging':
+                $supported = $capabilities->hasLogging();
+                break;
+            default:
+                $supported = false;
+        }
 
-        if (!($checks[$capability] ?? false)) {
+        if (!$supported) {
             throw new CapabilityException(
                 "Server does not support '{$capability}' capability required for {$method}"
             );
@@ -881,6 +891,21 @@ class McpClient
         $this->validateResponse($method, $result);
 
         return $result;
+    }
+
+    /**
+     * Normalize arguments for JSON serialization.
+     *
+     * MCP servers expect empty objects as {} not []. This ensures empty
+     * argument arrays are encoded as JSON objects.
+     *
+     * @param array<string, mixed> $arguments The arguments to normalize.
+     *
+     * @return stdClass|array<string, mixed> stdClass for empty, original array otherwise.
+     */
+    private function normalizeArguments(array $arguments)
+    {
+        return empty($arguments) ? new stdClass() : $arguments;
     }
 
     /**

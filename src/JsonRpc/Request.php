@@ -100,18 +100,6 @@ class Request extends Message
             throw new JsonRpcException('Invalid request ID', JsonRpcException::INVALID_REQUEST);
         }
 
-        $method = $data['method'] ?? null;
-
-        if (!is_string($method)) {
-            throw new JsonRpcException('Invalid method', JsonRpcException::INVALID_REQUEST);
-        }
-
-        $params = $data['params'] ?? null;
-
-        if ($params !== null && !is_array($params)) {
-            throw new JsonRpcException('Invalid params', JsonRpcException::INVALID_PARAMS);
-        }
-
-        return new self($id, $method, $params);
+        return new self($id, self::extractMethod($data), self::extractParams($data));
     }
 }

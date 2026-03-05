@@ -17,8 +17,6 @@ class JsonRpcException extends McpException
     public const INVALID_PARAMS   = -32602;
     public const INTERNAL_ERROR   = -32603;
 
-    protected int $error_code;
-
     /** @var mixed */
     protected $error_data;
 
@@ -32,7 +30,6 @@ class JsonRpcException extends McpException
     public function __construct(string $message, int $error_code = self::INTERNAL_ERROR, $error_data = null)
     {
         parent::__construct($message, $error_code);
-        $this->error_code = $error_code;
         $this->error_data = $error_data;
     }
 
@@ -41,7 +38,7 @@ class JsonRpcException extends McpException
      */
     public function getErrorCode(): int
     {
-        return $this->error_code;
+        return $this->getCode();
     }
 
     /**
