@@ -4,7 +4,6 @@
 /.phpunit.cache/
 /coverage/
 /.php-cs-fixer.cache
-/phpstan.neon
 /.idea/
 /.vscode/
 *.swp
