@@ -3,11 +3,6 @@
     "description": "A PHP MCP (Model Context Protocol) client implementation",
     "type": "library",
     "license": "GPL-2.0-or-later",
-    "authors": [
-        {
-            "name": "Ovidiu Galatan"
-        }
-    ],
     "repositories": [
         {
             "type": "vcs",
