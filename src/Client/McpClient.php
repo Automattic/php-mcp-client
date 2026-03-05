@@ -235,7 +235,7 @@ class McpClient
         $result = $this->requestArray('tools/call', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
-        ], $timeout, $meta ?? []);
+        ], $timeout, $meta);
         $this->validateResponse('tools/call', $result);
 
         return $result;
@@ -274,7 +274,7 @@ class McpClient
 
         $result = $this->requestArray('resources/read', [
             'uri' => $uri,
-        ], $timeout, $meta ?? []);
+        ], $timeout, $meta);
         $this->validateResponse('resources/read', $result);
 
         return $result;
@@ -335,7 +335,7 @@ class McpClient
         $result = $this->requestArray('prompts/get', [
             'name'      => $name,
             'arguments' => empty($arguments) ? new stdClass() : $arguments,
-        ], $timeout, $meta ?? []);
+        ], $timeout, $meta);
         $this->validateResponse('prompts/get', $result);
 
         return $result;
@@ -427,7 +427,7 @@ class McpClient
      * @param string              $method  The method name.
      * @param array<string, mixed> $params The request parameters.
      * @param float               $timeout Request timeout in seconds.
-     * @param array<string, mixed> $meta   Optional protocol-level metadata (e.g. progressToken).
+     * @param array<string, mixed>|null $meta Optional protocol-level metadata (e.g. progressToken).
      *
      * @return array<string, mixed> The response result.
      *
@@ -437,7 +437,7 @@ class McpClient
         string $method,
         array $params = [],
         float $timeout = 30.0,
-        array $meta = []
+        ?array $meta = null
     ): array {
         $result = $this->request($method, $params, $timeout, $meta);
 
@@ -454,13 +454,13 @@ class McpClient
      * @param string              $method  The method name.
      * @param array<string, mixed> $params The request parameters.
      * @param float               $timeout Request timeout in seconds.
-     * @param array<string, mixed> $meta   Optional protocol-level metadata (e.g. progressToken).
+     * @param array<string, mixed>|null $meta Optional protocol-level metadata (e.g. progressToken).
      *
      * @return mixed The response result.
      *
      * @throws McpException When the request fails.
      */
-    public function request(string $method, array $params = [], float $timeout = 30.0, array $meta = [])
+    public function request(string $method, array $params = [], float $timeout = 30.0, ?array $meta = null)
     {
         $this->ensureConnected();
 
@@ -640,23 +640,15 @@ class McpClient
     /**
      * Send a cancellation notification for a timed-out request.
      *
-     * Uses $this->transport->send() directly to avoid ensureConnected() overhead
-     * on the error path. Failures are logged at warning level but never mask
-     * the TimeoutException that will follow.
+     * Failures are logged at warning level but never mask the TimeoutException
+     * that will follow.
      *
      * @param int|string $request_id The request ID that timed out.
      */
     private function sendTimeoutCancellation($request_id): void
     {
         try {
-            $notification = new Notification('notifications/cancelled', [
-                'requestId' => $request_id,
-                'reason'    => 'Client timeout',
-            ]);
-
-            $this->transport->send($notification->toJson());
-
-            $this->logger->debug('Sent timeout cancellation', ['requestId' => $request_id]);
+            $this->sendCancellation($request_id, 'Client timeout');
         } catch (Throwable $e) {
             $this->logger->warning('Failed to send timeout cancellation', [
                 'requestId' => $request_id,
