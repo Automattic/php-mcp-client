@@ -1,0 +1,44 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [trunk, main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+    name: PHP ${{ matrix.php }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, curl
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist
+
+      - run: composer test
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    name: Static Analysis
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: json, curl
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist
+
+      - run: composer phpstan
+
+      - run: composer phpcs

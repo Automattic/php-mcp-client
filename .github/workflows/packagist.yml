@@ -1,0 +1,15 @@
+name: Update Packagist
+
+on:
+  push:
+    branches: [trunk, main]
+    tags: ['*']
+
+jobs:
+  packagist:
+    runs-on: ubuntu-latest
+    name: Notify Packagist
+    steps:
+      - run: |
+          curl -s -X POST "https://packagist.org/api/update-package?username=automattic&apiToken=${{ secrets.PACKAGIST_TOKEN }}" \
+            -d '{"repository":{"url":"https://github.com/${{ github.repository }}"}}'
