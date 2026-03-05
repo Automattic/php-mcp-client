@@ -845,13 +845,13 @@ final class McpClientTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // Protocol Version Negotiation (2 tests)
+    // Protocol Version Negotiation (3 tests)
     // -------------------------------------------------------------------------
 
     /**
-     * Test connect throws McpException when server returns a mismatched protocol version.
+     * Test connect throws McpException when server returns an unsupported protocol version.
      */
-    public function test_connect_withMismatchedProtocolVersion_throwsMcpException(): void
+    public function test_connect_withUnsupportedProtocolVersion_throwsMcpException(): void
     {
         $transport = new MockTransport();
 
@@ -876,9 +876,42 @@ final class McpClientTest extends TestCase
         );
 
         $this->expectException(McpException::class);
-        $this->expectExceptionMessage('client supports 2025-11-25, server returned 2024-01-01');
+        $this->expectExceptionMessage('server returned 2024-01-01');
 
         $client->connect();
+    }
+
+    /**
+     * Test connect succeeds when server returns an older but supported protocol version.
+     */
+    public function test_connect_withOlderSupportedVersion_succeeds(): void
+    {
+        $transport = new MockTransport();
+
+        $transport->queueResponse(json_encode([
+            'jsonrpc' => '2.0',
+            'id'      => 1,
+            'result'  => [
+                'protocolVersion' => '2025-06-18',
+                'serverInfo'      => [
+                    'name'    => 'test-server',
+                    'version' => '1.0.0',
+                ],
+                'capabilities' => [],
+            ],
+        ]));
+
+        $client = new McpClient(
+            $transport,
+            new ClientCapabilities(),
+            'test-client',
+            '1.0.0'
+        );
+
+        $client->connect();
+
+        $this->assertSame('test-server', $client->getServerInfo()->getName());
+        $this->assertSame('2025-06-18', $client->getServerInfo()->getProtocolVersion());
     }
 
     /**

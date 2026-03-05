@@ -38,6 +38,19 @@ class McpClient
     public const PROTOCOL_VERSION = '2025-11-25';
 
     /**
+     * Protocol versions this client can work with.
+     *
+     * The client advertises PROTOCOL_VERSION during initialization but accepts
+     * any version in this list from the server response. Ordered newest-first.
+     *
+     * @var array<int, string>
+     */
+    public const SUPPORTED_VERSIONS = [
+        self::PROTOCOL_VERSION,
+        '2025-06-18',
+    ];
+
+    /**
      * Map of JSON-RPC method names to their required response keys.
      *
      * @var array<string, string>
@@ -549,10 +562,10 @@ class McpClient
 
         $protocol_version = $result['protocolVersion'];
 
-        if ($protocol_version !== self::PROTOCOL_VERSION) {
+        if (!in_array($protocol_version, self::SUPPORTED_VERSIONS, true)) {
             throw new McpException(sprintf(
-                'Protocol version mismatch: client supports %s, server returned %s',
-                self::PROTOCOL_VERSION,
+                'Protocol version mismatch: client supports [%s], server returned %s',
+                implode(', ', self::SUPPORTED_VERSIONS),
                 $protocol_version
             ));
         }
