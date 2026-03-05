@@ -26,7 +26,7 @@ A PHP client for the [Model Context Protocol](https://modelcontextprotocol.io/) 
 ## Installation
 
 ```bash
-composer require galatanovidiu/php-mcp-client
+composer require automattic/php-mcp-client
 ```
 
 > **Note:** This package depends on `wordpress/php-mcp-schema` which is loaded from a VCS repository. Add the following to your project's `composer.json` if it is not already present:
