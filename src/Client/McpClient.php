@@ -21,9 +21,10 @@ use Automattic\PhpMcpClient\JsonRpc\Request;
 use Automattic\PhpMcpClient\JsonRpc\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use ReflectionClass;
 use stdClass;
 use Throwable;
-use WP\McpSchema\Server\Logging\Enum\LoggingLevel;
+use WP\McpSchema\Value\LoggingLevel;
 
 /**
  * MCP Client for communicating with MCP servers.
@@ -369,7 +370,7 @@ class McpClient
     /**
      * Set the logging level on the server.
      *
-     * @param string $level   The logging level (one of LoggingLevel::values()).
+     * @param string $level   The logging level (one of the LoggingLevel constants).
      * @param float  $timeout Request timeout in seconds.
      *
      * @throws McpException When the level is invalid or the request fails.
@@ -377,7 +378,7 @@ class McpClient
      */
     public function setLoggingLevel(string $level, float $timeout = 30.0): void
     {
-        $valid_levels = LoggingLevel::values();
+        $valid_levels = array_values((new ReflectionClass(LoggingLevel::class))->getConstants());
 
         if (!in_array($level, $valid_levels, true)) {
             throw new McpException(
