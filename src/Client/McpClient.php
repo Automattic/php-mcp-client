@@ -56,6 +56,16 @@ class McpClient
      *
      * @var array<string, string>
      */
+    /**
+     * Longest single transport wait, in seconds, while awaiting a response.
+     *
+     * Requests issued concurrently on one client (for example from PHP
+     * fibers) share one transport. Whichever waiter reads a response that
+     * belongs to another pending request buffers it for that request; each
+     * waiter returns to its buffer at least this often.
+     */
+    private const RESPONSE_WAIT_SLICE = 0.05;
+
     private const RESPONSE_REQUIRED_KEYS = [
         'tools/list'               => 'tools',
         'tools/call'               => 'content',
@@ -78,6 +88,13 @@ class McpClient
     private array $message_handlers = [];
 
     private ?RootsHandlerInterface $roots_handler = null;
+
+    /**
+     * Requests awaiting a response, keyed by request ID.
+     *
+     * @var array<int|string, Response|null>
+     */
+    private array $pending = [];
 
     private string $client_name;
     private string $client_version;
@@ -487,9 +504,7 @@ class McpClient
 
         $this->logger->debug('Sending request', [ 'id' => $id, 'method' => $method ]);
 
-        $this->transport->send($request->toJson());
-
-        return $this->waitForResponse($id, $timeout);
+        return $this->sendAndWait($id, $request, $timeout);
     }
 
     /**
@@ -549,9 +564,7 @@ class McpClient
 
         $this->logger->debug('Sending initialize request');
 
-        $this->transport->send($init_request->toJson());
-
-        $result = $this->waitForResponse($id, $timeout);
+        $result = $this->sendAndWait($id, $init_request, $timeout);
 
         if (! is_array($result)) {
             throw new McpException('Invalid initialize response');
@@ -599,10 +612,44 @@ class McpClient
     }
 
     /**
+     * Send a request and wait for its response.
+     *
+     * The request stays registered as pending for the whole wait, so a
+     * response read by any other waiter on this client is kept for it.
+     *
+     * @param int|string $request_id The request ID.
+     * @param Request    $request    The request to send.
+     * @param float      $timeout    Timeout in seconds.
+     *
+     * @return mixed The response result.
+     *
+     * @throws TimeoutException When timeout occurs.
+     * @throws JsonRpcException When server returns an error.
+     * @throws TransportException When sending or receiving messages fails.
+     */
+    private function sendAndWait($request_id, Request $request, float $timeout)
+    {
+        $this->pending[$request_id] = null;
+
+        try {
+            $this->transport->send($request->toJson());
+
+            return $this->waitForResponse($request_id, $timeout);
+        } finally {
+            unset($this->pending[$request_id]);
+        }
+    }
+
+    /**
      * Wait for a response to a specific request.
      *
+     * Messages read while waiting are dispatched in order: server requests
+     * and notifications to their handlers, and responses to other pending
+     * requests into their buffer. Waits are sliced so a response buffered by
+     * another waiter is picked up promptly.
+     *
      * @param int|string $request_id The request ID to wait for.
-     * @param float $timeout Timeout in seconds.
+     * @param float      $timeout    Timeout in seconds.
      *
      * @return mixed The response result.
      *
@@ -615,40 +662,67 @@ class McpClient
         $start = microtime(true);
 
         while (true) {
-            $elapsed   = microtime(true) - $start;
-            $remaining = $timeout - $elapsed;
+            $buffered = $this->pending[$request_id] ?? null;
+            if ($buffered !== null) {
+                return $this->responseResult($buffered);
+            }
+
+            $remaining = $timeout - (microtime(true) - $start);
 
             if ($remaining <= 0) {
                 $this->sendTimeoutCancellation($request_id);
                 throw new TimeoutException("Request $request_id timed out after $timeout seconds");
             }
 
-            $message_json = $this->transport->receive($remaining);
+            $wait         = min($remaining, self::RESPONSE_WAIT_SLICE);
+            $asked_at     = microtime(true);
+            $message_json = $this->transport->receive($wait);
 
             if ($message_json === null) {
-                $this->sendTimeoutCancellation($request_id);
-                throw new TimeoutException("Request $request_id timed out after $timeout seconds");
+                // A transport that returns without waiting holds nothing for
+                // this request; only another waiter could still deliver it.
+                $waited = microtime(true) - $asked_at >= $wait / 2;
+                if (! $waited && count($this->pending) === 1) {
+                    $this->sendTimeoutCancellation($request_id);
+                    throw new TimeoutException("Request $request_id timed out after $timeout seconds");
+                }
+                continue;
             }
 
             $message = Message::fromJson($message_json);
 
             if ($message instanceof Response && $message->getId() === $request_id) {
-                $error = $message->getError();
-
-                if ($error !== null) {
-                    throw new JsonRpcException(
-                        $error->getMessage(),
-                        $error->getCode(),
-                        $error->getData()
-                    );
-                }
-
-                return $message->getResult();
+                return $this->responseResult($message);
             }
 
-            // Handle other incoming messages (requests/notifications from server)
+            // Handle other incoming messages (requests/notifications from server,
+            // responses to other pending requests).
             $this->handleMessage($message);
         }
+    }
+
+    /**
+     * Unwrap a response into its result.
+     *
+     * @param Response $response The response.
+     *
+     * @return mixed The response result.
+     *
+     * @throws JsonRpcException When the response carries an error.
+     */
+    private function responseResult(Response $response)
+    {
+        $error = $response->getError();
+
+        if ($error !== null) {
+            throw new JsonRpcException(
+                $error->getMessage(),
+                $error->getCode(),
+                $error->getData()
+            );
+        }
+
+        return $response->getResult();
     }
 
     /**
@@ -706,8 +780,15 @@ class McpClient
         } elseif ($message instanceof Notification) {
             $this->handleServerNotification($message);
         } elseif ($message instanceof Response) {
+            $id = $message->getId();
+
+            if ($id !== null && array_key_exists($id, $this->pending)) {
+                $this->pending[$id] = $message;
+                return;
+            }
+
             $this->logger->warning('Discarding unmatched response', [
-                'id' => $message->getId(),
+                'id' => $id,
             ]);
         }
     }
